@@ -46,14 +46,17 @@ document.getElementById('calculer').addEventListener('click', function() {
                 irppAnnuel += tranche * 0.33;
             }
             if (salaireImposableAnnuel > 40000) {
-                const tranche = salaireImposableAnnuel - 40000;
+                const tranche = Math.min(salaireImposableAnnuel - 40000, 10000);
                 irppAnnuel += tranche * 0.36;
             }
             if (salaireImposableAnnuel > 50000) {
-                const tranche = salaireImposableAnnuel - 50000;
+                const tranche = Math.min(salaireImposableAnnuel - 50000, 10000);
+                irppAnnuel += tranche * 0.38;
+            }
+            if (salaireImposableAnnuel > 70000) {
+                const tranche = Math.min(salaireImposableAnnuel - 70000, 10000);
                 irppAnnuel += tranche * 0.40;
             }
-            
             const irppMensuel = irppAnnuel / 12;
             
             // 6. Calcul CSS (0.5% du salaire imposable après déductions)
