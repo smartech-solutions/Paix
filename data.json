@@ -1,0 +1,19 @@
+{
+  "employees": [
+    {
+      
+        "firstName": "Aymen",
+        "lastName": "Ftita",
+        "cin": "13016025",
+        "dateOfBirth": "1985-03-15",
+        "address": "Avenue Habib Bourguiba, Tunis",
+        "phone": "+216 98 123 456",
+        "email": "it@smartech-solutions.net",
+        "isChefFamille": true,
+        "nbEnfants": 3,
+        "dateOfRecrutement": "2025-06-01",
+        "salaire": 4388.160
+    }
+    
+  ]
+}
