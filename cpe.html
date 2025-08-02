@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +14,14 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
+
         .container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         .form-group {
             margin-bottom: 20px;
             padding: 20px;
@@ -26,16 +29,19 @@
             border-radius: 8px;
             border-left: 4px solid #4CAF50;
         }
+
         .form-group h3 {
             margin-top: 0;
             color: #333;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
             color: #555;
         }
+
         select {
             padding: 12px;
             width: 100%;
@@ -45,12 +51,15 @@
             font-size: 14px;
             background-color: white;
         }
+
         select:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
         }
-        input, button {
+
+        input,
+        button {
             padding: 12px;
             width: 100%;
             box-sizing: border-box;
@@ -58,23 +67,28 @@
             border-radius: 4px;
             font-size: 14px;
         }
+
         input:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
         }
+
         .salary-addition {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
             align-items: end;
         }
+
         .salary-addition input[type="text"] {
             flex: 2;
         }
+
         .salary-addition input[type="number"] {
             flex: 1;
         }
+
         .remove-btn {
             background: #f44336;
             color: white;
@@ -85,7 +99,9 @@
             width: auto;
             min-width: 40px;
         }
-        .add-salary-btn, .calculate-btn {
+
+        .add-salary-btn,
+        .calculate-btn {
             background: #4CAF50;
             color: white;
             border: none;
@@ -94,12 +110,16 @@
             border-radius: 4px;
             font-weight: bold;
         }
-        .add-salary-btn:hover, .calculate-btn:hover {
+
+        .add-salary-btn:hover,
+        .calculate-btn:hover {
             background: #45a049;
         }
+
         .remove-btn:hover {
             background: #d32f2f;
         }
+
         #results {
             margin-top: 30px;
             padding: 25px;
@@ -107,6 +127,7 @@
             border-radius: 8px;
             border: 1px solid #b3d9ff;
         }
+
         .result-item {
             display: flex;
             justify-content: space-between;
@@ -114,9 +135,11 @@
             padding: 8px 0;
             border-bottom: 1px solid #e0e0e0;
         }
+
         .result-item:last-child {
             border-bottom: none;
         }
+
         .result-item.total {
             font-weight: bold;
             font-size: 18px;
@@ -126,6 +149,7 @@
             border-radius: 5px;
             margin-top: 15px;
         }
+
         .salary-breakdown {
             background: #fff3cd;
             padding: 15px;
@@ -133,14 +157,15 @@
             margin-bottom: 20px;
             border: 1px solid #ffeaa7;
         }
-                .header {
+
+        .header {
             background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
             color: white;
             padding: 20px 30px;
             border-radius: 10px 10px 0 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -148,13 +173,13 @@
             flex-wrap: wrap;
             gap: 20px;
         }
-        
+
         .logo-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
+
         .logo {
             width: 50px;
             height: 50px;
@@ -167,25 +192,25 @@
             font-weight: bold;
             color: #0f31f1b5;
         }
-        
+
         .logo-text h1 {
             margin: 0;
             font-size: 24px;
             font-weight: bold;
         }
-        
+
         .logo-text p {
             margin: 0;
             font-size: 14px;
             opacity: 0.9;
         }
-        
+
         .nav-links {
             display: flex;
             gap: 20px;
             align-items: center;
         }
-        
+
         .nav-link {
             color: white;
             text-decoration: none;
@@ -195,25 +220,25 @@
             font-weight: 500;
             border: 2px solid transparent;
         }
-        
+
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
-        
+
         .nav-link.active {
             background: white;
             color: #0f31f1b5;
             font-weight: bold;
         }
-        
+
         @media (max-width: 600px) {
             .header-content {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
@@ -221,17 +246,19 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="header-content">
             <div class="logo-section">
-                <img style="max-width: 100%; height:100px;" src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo">
+                <img style="max-width: 100%; height:100px;" src="template_fiche-de-paix/smartech_logo.png"
+                    alt="Smartech Logo">
                 <div class="logo-text">
                     <h1>SmarTech Solutions</h1>
                     <p>Système de Paie Professionnel</p>
                 </div>
             </div>
-            
+
             <nav class="nav-links">
                 <a href="cl.html" class="nav-link active">Calculateur</a>
                 <a href="cpe.html" class="nav-link">Fiche de Paie</a>
@@ -240,15 +267,16 @@
     </div>
     <div class="container">
         <h2>Calculateur de Paie Tunisien</h2>
-        
+
         <div class="form-group">
             <h3>Sélection de l'Employé</h3>
             <label for="employee-select">Choisir un employé:</label>
             <select id="employee-select" onchange="loadEmployeeData()">
                 <option value="">-- Sélectionner un employé --</option>
             </select>
-            
-            <div id="employee-info" style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 5px;">
+
+            <div id="employee-info"
+                style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 5px;">
                 <h4>Informations de l'employé:</h4>
                 <p><strong>Nom:</strong> <span id="emp-name"></span></p>
                 <p><strong>CIN:</strong> <span id="emp-cin"></span></p>
@@ -266,8 +294,9 @@
             <div id="additional-salaries">
                 <h4 style="margin-top: 20px; margin-bottom: 15px;">Compléments de salaire:</h4>
             </div>
-            
-            <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de salaire</button>
+
+            <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de
+                salaire</button>
         </div>
 
         <div class="form-group">
@@ -275,12 +304,12 @@
             <label for="avance">Avance (DT):</label>
             <input type="number" id="avance" step="0.001" min="0" value="0">
         </div>
-        
+
         <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
-        
+
         <div id="results" style="display: none;">
             <h3>Détail du Calcul</h3>
-            
+
             <div class="salary-breakdown">
                 <h4>Composition du Salaire Brut:</h4>
                 <div class="result-item">
@@ -341,7 +370,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2025-04-14",
                     "salaire": 3548.994,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Responsable administratif et financier"
                 },
                 {
@@ -356,7 +385,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2020-06-01",
                     "salaire": 1371.095,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Attache administratif"
 
                 },
@@ -372,7 +401,7 @@
                     "nbEnfants": 1,
                     "dateOfRecrutement": "2023-11-12",
                     "salaire": 7098.633,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Lead civil and pipeline engineer"
 
                 },
@@ -388,7 +417,7 @@
                     "nbEnfants": 3,
                     "dateOfRecrutement": "2025-04-01",
                     "salaire": 3868.043,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Responsable Achat"
 
                 },
@@ -404,7 +433,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2024-11-03",
                     "salaire": 1200.000,
-                    "contrat":"CIVP",
+                    "contrat": "CIVP",
                     "poste": "Automation Engineer"
 
                 },
@@ -420,7 +449,7 @@
                     "nbEnfants": 2,
                     "dateOfRecrutement": "2025-04-01",
                     "salaire": 6179.100,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Upstream Engineer"
 
                 },
@@ -436,7 +465,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2025-02-03",
                     "salaire": 1000.000,
-                    "contrat":"CIVP",
+                    "contrat": "CIVP",
                     "poste": "Automation Engineer"
 
                 },
@@ -452,7 +481,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2025-02-03",
                     "salaire": 1300.000,
-                    "contrat":"CIVP",
+                    "contrat": "CIVP",
                     "poste": "Automation Engineer"
 
                 },
@@ -468,7 +497,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "1999-09-10",
                     "salaire": 2740.058,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Responsable qualité QA/QC HSSE"
 
                 },
@@ -484,7 +513,7 @@
                     "nbEnfants": 0,
                     "dateOfRecrutement": "2025-06-02",
                     "salaire": 3063.460,
-                    "contrat":"CDI",
+                    "contrat": "CDI",
                     "poste": "Process Engineer"
 
                 },
@@ -502,7 +531,7 @@
         function populateEmployeeSelect() {
             const select = document.getElementById('employee-select');
             select.innerHTML = '<option value="">-- Sélectionner un employé --</option>';
-            
+
             employeesData.employees.forEach((employee, index) => {
                 const option = document.createElement('option');
                 option.value = index;
@@ -515,7 +544,7 @@
         function loadEmployeeData() {
             const select = document.getElementById('employee-select');
             const selectedIndex = select.value;
-            
+
             if (selectedIndex === '') {
                 document.getElementById('employee-info').style.display = 'none';
                 selectedEmployee = null;
@@ -523,9 +552,9 @@
                 document.getElementById('salaire-base').value = 0;
                 return;
             }
-            
+
             selectedEmployee = employeesData.employees[selectedIndex];
-            
+
             // Display employee info
             document.getElementById('emp-name').textContent = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
             document.getElementById('emp-cin').textContent = selectedEmployee.cin;
@@ -533,7 +562,7 @@
             document.getElementById('emp-chef').textContent = selectedEmployee.isChefFamille ? 'Oui' : 'Non';
             document.getElementById('emp-enfants').textContent = selectedEmployee.nbEnfants;
             document.getElementById('employee-info').style.display = 'block';
-            
+
             // Populate salary field
             document.getElementById('salaire-base').value = selectedEmployee.salaire || 0;
         }
@@ -556,64 +585,64 @@
             field.remove();
         }
 
-        document.getElementById('calculer').addEventListener('click', function() {
+        document.getElementById('calculer').addEventListener('click', function () {
             // Check if employee is selected
             if (!selectedEmployee) {
                 alert('Veuillez sélectionner un employé');
                 return;
             }
-            
+
             // Get employee family information
             const isChefFamille = selectedEmployee.isChefFamille;
             const nbEnfants = selectedEmployee.nbEnfants || 0;
             const salaireBase = parseFloat(document.getElementById('salaire-base').value) || 0;
-            
+
             // Calcul des compléments de salaire
             let totalComplements = 0;
             const complements = [];
-            
+
             for (let i = 1; i <= salaryCounter; i++) {
                 const nameField = document.getElementById(`salary-name-${i}`);
                 const amountField = document.getElementById(`salary-amount-${i}`);
-                
+
                 if (nameField && amountField) {
                     const name = nameField.value.trim();
                     const amount = parseFloat(amountField.value) || 0;
-                    
+
                     if (name && amount > 0) {
                         complements.push({ name, amount });
                         totalComplements += amount;
                     }
                 }
             }
-            
+
             // Calcul du salaire brut
             const salaireBrut = salaireBase + totalComplements;
-            
+
             // 1. Calcul CNSS (9.68% du brut)
             const cnss = salaireBrut * 0.0968;
-            
+
             // 2. Salaire imposable sans déduction
             const salaireImposableSansDeduction = salaireBrut - cnss;
-            
+
             // 3. Déductions
             // a) Professionnelle (10% du salaire imposable, plafond 2000 DT annuel)
             const deductionProAnnuelle = Math.min(salaireImposableSansDeduction * 12 * 0.10, 2000);
             const deductionProMensuelle = deductionProAnnuelle / 12;
-            
+
             // b) Déductions familiales
             let deductionFamille = 0;
             if (isChefFamille) deductionFamille += 300;
             deductionFamille += nbEnfants * 100;
             const deductionFamilleMensuelle = deductionFamille / 12;
-            
+
             // 4. Salaire imposable après déductions
             const salaireImposableAvecDeduction = salaireImposableSansDeduction - deductionProMensuelle - deductionFamilleMensuelle;
-            
+
             // 5. Calcul IRPP (annuel)
             const salaireImposableAnnuel = salaireImposableAvecDeduction * 12;
             let irppAnnuel = 0;
-            
+
             // Barème IRPP
             if (salaireImposableAnnuel > 5000) {
                 const tranche = Math.min(salaireImposableAnnuel - 5000, 5000);
@@ -658,17 +687,17 @@
                 console.log(irppAnnuel);
             }
             const irppMensuel = irppAnnuel / 12;
-            
+
             // 6. Calcul CSS (0.5% du salaire imposable après déductions)
             const css = salaireImposableAvecDeduction * 0.005;
-            
+
             // 7. Salaire net
             const avance = parseFloat(document.getElementById('avance').value) || 0;
             const salaireNet = salaireBrut - cnss - irppMensuel - css - avance;
-            
+
             // Affichage des résultats
             document.getElementById('s-base').textContent = salaireBase.toFixed(3) + ' DT';
-            
+
             // Affichage des compléments
             const additionalBreakdown = document.getElementById('additional-breakdown');
             additionalBreakdown.innerHTML = '';
@@ -681,20 +710,36 @@
                 `;
                 additionalBreakdown.appendChild(div);
             });
-            
-            document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
-            document.getElementById('s-cnss').textContent = cnss.toFixed(3) + ' DT';
-            document.getElementById('s-imposable').textContent = salaireImposableSansDeduction.toFixed(3) + ' DT';
-            document.getElementById('s-irpp').textContent = irppMensuel.toFixed(3) + ' DT';
-            document.getElementById('s-css').textContent = css.toFixed(3) + ' DT';
-            document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
-            document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
-            
-            document.getElementById('results').style.display = 'block';
+
+            if (selectedEmployee.contrat === "CIVP") {
+                document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
+                document.getElementById('s-cnss').textContent = 0 + ' DT';
+                document.getElementById('s-imposable').textContent = salaireImposableSansDeduction.toFixed(3) + ' DT';
+                document.getElementById('s-irpp').textContent = 0 + ' DT';
+                document.getElementById('s-css').textContent = 0 + ' DT';
+                document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
+                document.getElementById('s-net').textContent = salaireBrut.toFixed(3) + ' DT';
+
+                document.getElementById('results').style.display = 'block';
+
+            } else {
+                document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
+                document.getElementById('s-cnss').textContent = cnss.toFixed(3) + ' DT';
+                document.getElementById('s-imposable').textContent = salaireImposableSansDeduction.toFixed(3) + ' DT';
+                document.getElementById('s-irpp').textContent = irppMensuel.toFixed(3) + ' DT';
+                document.getElementById('s-css').textContent = css.toFixed(3) + ' DT';
+                document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
+                document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
+
+                document.getElementById('results').style.display = 'block';
+            }
+
+
         });
 
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
+
 </html>

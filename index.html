@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,7 +20,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .login-container {
             background: white;
             padding: 40px;
@@ -29,35 +30,36 @@
             max-width: 400px;
             text-align: center;
         }
-        
+
         .logo {
             margin-bottom: 30px;
         }
-        
+
         .logo h1 {
             color: #333;
             font-size: 28px;
             margin-bottom: 5px;
         }
-        
+
         .logo p {
             color: #666;
             font-size: 14px;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
             color: #555;
             font-weight: bold;
         }
-        
-        input[type="email"], input[type="password"] {
+
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e1e1;
@@ -65,13 +67,14 @@
             font-size: 16px;
             transition: border-color 0.3s ease;
         }
-        
-        input[type="email"]:focus, input[type="password"]:focus {
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
         }
-        
+
         .login-btn {
             width: 100%;
             padding: 15px;
@@ -85,16 +88,16 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             margin-top: 10px;
         }
-        
+
         .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
-        
+
         .login-btn:active {
             transform: translateY(0);
         }
-        
+
         .error-notification {
             background: #ffebee;
             color: #c62828;
@@ -105,7 +108,7 @@
             display: none;
             animation: slideIn 0.3s ease;
         }
-        
+
         .success-notification {
             background: #e8f5e8;
             color: #2e7d32;
@@ -116,27 +119,28 @@
             display: none;
             animation: slideIn 0.3s ease;
         }
-        
+
         @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .loading {
             opacity: 0.7;
             pointer-events: none;
         }
-        
+
         .loading .login-btn {
             background: #ccc;
         }
-        
+
         .form-footer {
             margin-top: 30px;
             padding-top: 20px;
@@ -144,7 +148,7 @@
             color: #666;
             font-size: 12px;
         }
-        
+
         .icon {
             width: 20px;
             height: 20px;
@@ -153,13 +157,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <div class="logo">
-            <h1><img style="max-width: 100%; height:100px;" src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo"></h1>
+            <h1><img style="max-width: 100%; height:100px;" src="template_fiche-de-paix/smartech_logo.png"
+                    alt="Smartech Logo"></h1>
             <p>Calculateur de Paie Professionnel pour Smartech</p>
         </div>
-        
+
         <form id="login-form">
             <div class="form-group">
                 <label for="email">
@@ -167,29 +173,29 @@
                 </label>
                 <input type="email" id="email" placeholder="Entrez votre email" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">
                     🔒 Mot de Passe:
                 </label>
                 <input type="password" id="password" placeholder="Entrez votre mot de passe" required>
             </div>
-            
+
             <button type="submit" class="login-btn">
                 Se Connecter
             </button>
         </form>
-        
+
         <div id="error-notification" class="error-notification">
             <strong>❌ Erreur de connexion</strong><br>
             Email ou mot de passe incorrect. Veuillez réessayer.
         </div>
-        
+
         <div id="success-notification" class="success-notification">
             <strong>✅ Connexion réussie</strong><br>
             Redirection en cours...
         </div>
-        
+
         <div class="form-footer">
             <p>Système de paie sécurisé - SmarTech Solutions</p>
         </div>
@@ -199,38 +205,38 @@
         // Login credentials
         const VALID_EMAIL = "walid.dhay@smartech-solutions.net";
         const VALID_PASSWORD = "smartechsolutions";
-        
+
         // Handle form submission
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            
+
             // Hide any previous notifications
             hideNotifications();
-            
+
             // Add loading state
             document.querySelector('.login-container').classList.add('loading');
-            
+
             // Simulate loading delay for better UX
             setTimeout(() => {
                 // Check credentials
                 if (email === VALID_EMAIL && password === VALID_PASSWORD) {
                     // Success
                     showSuccessNotification();
-                    
+
                     // Store login state (in memory only, no localStorage)
                     window.isLoggedIn = true;
                     window.location.href = "cl.html";
-                    
+
                     // Redirect after short delay
                     setTimeout(() => {
                         // Since we can't actually navigate to cl.html in this environment,
                         // we'll simulate it by showing the calculator
                         showCalculator();
                     }, 1500);
-                    
+
                 } else {
                     // Error
                     showErrorNotification();
@@ -238,25 +244,25 @@
                 }
             }, 800);
         });
-        
+
         function hideNotifications() {
             document.getElementById('error-notification').style.display = 'none';
             document.getElementById('success-notification').style.display = 'none';
         }
-        
+
         function showErrorNotification() {
             document.getElementById('error-notification').style.display = 'block';
-            
+
             // Auto-hide after 3 seconds
             setTimeout(() => {
                 document.getElementById('error-notification').style.display = 'none';
             }, 3000);
         }
-        
+
         function showSuccessNotification() {
             document.getElementById('success-notification').style.display = 'block';
         }
-        
+
         function showCalculator() {
             // In a real application, this would be: window.location.href = 'cl.html';
             // For this demo, we'll replace the login form with the calculator
@@ -278,18 +284,19 @@
                 </div>
             `;
         }
-        
+
         // Auto-focus on email field
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             document.getElementById('email').focus();
         });
-        
+
         // Allow Enter key to submit from password field
-        document.getElementById('password').addEventListener('keypress', function(e) {
+        document.getElementById('password').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 document.getElementById('login-form').dispatchEvent(new Event('submit'));
             }
         });
     </script>
 </body>
+
 </html>
