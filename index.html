@@ -224,18 +224,22 @@
                 // Check credentials
                 if (email === VALID_EMAIL && password === VALID_PASSWORD) {
                     // Success
+                    //showSuccessNotification();
                     showSuccessNotification();
+                    
+                    window.location = "loading.html";
+                    
 
-                    // Store login state (in memory only, no localStorage)
-                    window.isLoggedIn = true;
-                    window.location.href = "cl.html";
-
+                    
                     // Redirect after short delay
                     setTimeout(() => {
-                        // Since we can't actually navigate to cl.html in this environment,
-                        // we'll simulate it by showing the calculator
-                        showCalculator();
+                        
+                        isLoginSuccessful = true;
+                        window.location.href = "cl-2Ways.html";
+
                     }, 1500);
+
+                    
 
                 } else {
                     // Error

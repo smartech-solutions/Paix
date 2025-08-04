@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculateur de Paie Tunisien</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
+      color: white;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar img {
+      width: 100%;
+      max-height: 80px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .sidebar h1 {
+      font-size: 18px;
+      margin: 10px 0 5px;
+    }
+
+    .sidebar p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .nav-links {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 250px;
+      padding: 30px;
+      flex: 1;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #0f31f1b5;
+    }
+
+    .form-group h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input, button, select {
+      padding: 12px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0f31f1b5;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+
+    .calculation-mode {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .calculation-mode select {
+      flex: 1;
+    }
+
+    .salary-addition {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: end;
+    }
+
+    .salary-addition input[type="text"] {
+      flex: 2;
+    }
+
+    .salary-addition input[type="number"] {
+      flex: 1;
+    }
+
+    .remove-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 12px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: auto;
+      min-width: 40px;
+    }
+
+    .add-salary-btn, .calculate-btn {
+      background: #0f31f1b5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .add-salary-btn:hover, .calculate-btn:hover {
+      background: #0f31f1b5;
+    }
+
+    .remove-btn:hover {
+      background: #d32f2f;
+    }
+
+    #results {
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+      border-radius: 8px;
+      border: 1px solid #b3d9ff;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-item.total {
+      font-weight: bold;
+      font-size: 18px;
+      background: #1d3df6;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+
+    .salary-breakdown {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #ffeaa7;
+    }
+
+    .calculation-info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #90caf9;
+      color: #1565c0;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .nav-links {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      .main {
+        margin-left: 0;
+        margin-top: 130px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo-section">
+      <img src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo"/>
+      <h1>SMARTECH SOLUTIONS</h1>
+      <p>Système de Paie Professionnel</p>
+    </div>
+
+    <div class="nav-links">
+      <a href="cl-2Ways.html" class="nav-link active">Calculateur</a>
+      <a href="template.html" class="nav-link">Calcule par Employé</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="container">
+      <h2>Calculateur de Paie Tunisien</h2>
+
+      <div class="form-group">
+        <h3>Informations Personnelles</h3>
+        <label>
+          <input type="checkbox" id="chef-famille"> Chef de famille
+        </label>
+        <label for="enfants">Nombre d'enfants:</label>
+        <input type="number" id="enfants" min="0" value="0">
+      </div>
+
+      <div class="form-group">
+        <h3>Mode de Calcul</h3>
+        <div class="calculation-mode">
+          <select id="calculation-mode">
+            <option value="brut-to-net">Calculer le salaire net à partir du salaire brut</option>
+            <option value="net-to-brut">Calculer le salaire brut à partir du salaire net</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" id="salary-group">
+        <h3>Composantes du Salaire</h3>
+        <label for="salaire-base" id="salaire-base-label">Salaire de base (DT):</label>
+        <input type="number" id="salaire-base" step="0.001" min="0" value="0">
+        <div id="additional-salaries">
+          <h4 style="margin-top: 20px; margin-bottom: 15px;">Compléments de salaire:</h4>
+        </div>
+        <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de salaire</button>
+      </div>
+
+      <div class="form-group">
+        <h3>Déductions</h3>
+        <label for="avance">Avance (DT):</label>
+        <input type="number" id="avance" step="0.001" min="0" value="0">
+      </div>
+
+      <button class="calculate-btn" id="calculer">Calculer</button>
+
+      <div id="results" style="display: none;">
+        <div class="calculation-info" id="calculation-info"></div>
+        
+        <h3>Détail du Calcul</h3>
+
+        <div class="salary-breakdown">
+          <h4 id="breakdown-title">Composition du Salaire Brut:</h4>
+          <div class="result-item">
+            <span id="s-base-label">Salaire de base:</span>
+            <span id="s-base"></span>
+          </div>
+          <div id="additional-breakdown"></div>
+          <div class="result-item" style="font-weight: bold; border-top: 2px solid #333; padding-top: 10px;">
+            <span>Salaire brut total:</span>
+            <span id="s-brut"></span>
+          </div>
+        </div>
+
+        <div class="result-item">
+          <span>Retenue CNSS (9.68%):</span>
+          <span id="s-cnss"></span>
+        </div>
+        <div class="result-item">
+          <span>Salaire imposable:</span>
+          <span id="s-imposable"></span>
+        </div>
+        <div class="result-item">
+          <span>Retenue IRPP:</span>
+          <span id="s-irpp"></span>
+        </div>
+        <div class="result-item">
+          <span>Contribution sociale (0.5%):</span>
+          <span id="s-css"></span>
+        </div>
+        <div class="result-item">
+          <span>Avance:</span>
+          <span id="s-avance"></span>
+        </div>
+        <div class="result-item total">
+          <span>Salaire Net:</span>
+          <span id="s-net"></span>
+        </div>
+        
+        <div id="iterations-info" style="margin-top: 15px; font-size: 12px; color: #666;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let salaryCounter = 0;
+
+    function addSalaryField() {
+        salaryCounter++;
+        const container = document.getElementById('additional-salaries');
+        const div = document.createElement('div');
+        div.className = 'salary-addition';
+        div.innerHTML = `
+            <input type="text" placeholder="Nom du complément (ex: Prime, Indemnité...)" id="salary-name-${salaryCounter}">
+            <input type="number" step="0.001" min="0" placeholder="Montant (DT)" id="salary-amount-${salaryCounter}">
+            <button type="button" class="remove-btn" onclick="removeSalaryField(${salaryCounter})">×</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeSalaryField(id) {
+        const field = document.querySelector(`#salary-name-${id}`).closest('.salary-addition');
+        field.remove();
+    }
+
+    // Mise à jour des labels selon le mode de calcul
+    document.getElementById('calculation-mode').addEventListener('change', function() {
+        const mode = this.value;
+        const label = document.getElementById('salaire-base-label');
+        const calculateBtn = document.getElementById('calculer');
+        
+        if (mode === 'net-to-brut') {
+            label.textContent = 'Salaire net souhaité (DT):';
+            calculateBtn.textContent = 'Calculer le Salaire Brut';
+        } else {
+            label.textContent = 'Salaire de base (DT):';
+            calculateBtn.textContent = 'Calculer le Salaire Net';
+        }
+    });
+
+    function calculateNetFromGross(salaireBrut, isChefFamille, nbEnfants) {
+        // 1. Calcul CNSS (9.68% du brut)
+        const cnss = salaireBrut * 0.0968;
+        
+        // 2. Salaire imposable sans déduction
+        const salaireImposableSansDeduction = salaireBrut - cnss;
+        
+        // 3. Déductions
+        // a) Professionnelle (10% du salaire imposable, plafond 2000 DT annuel)
+        const deductionProAnnuelle = Math.min(salaireImposableSansDeduction * 12 * 0.10, 2000);
+        const deductionProMensuelle = deductionProAnnuelle / 12;
+        
+        // b) Déductions familiales
+        let deductionFamille = 0;
+        if (isChefFamille) deductionFamille += 300;
+        deductionFamille += nbEnfants * 100;
+        const deductionFamilleMensuelle = deductionFamille / 12;
+        
+        // 4. Salaire imposable après déductions
+        const salaireImposableAvecDeduction = salaireImposableSansDeduction - deductionProMensuelle - deductionFamilleMensuelle;
+        
+        // 5. Calcul IRPP (annuel)
+        const salaireImposableAnnuel = salaireImposableAvecDeduction * 12;
+        let irppAnnuel = 0;
+        
+        // Barème IRPP
+        if (salaireImposableAnnuel > 5000) {
+            const tranche = Math.min(salaireImposableAnnuel - 5000, 5000);
+            irppAnnuel += tranche * 0.15;
+        }
+        if (salaireImposableAnnuel > 10000) {
+            const tranche = Math.min(salaireImposableAnnuel - 10000, 10000);
+            irppAnnuel += tranche * 0.25;
+        }
+        if (salaireImposableAnnuel > 20000) {
+            const tranche = Math.min(salaireImposableAnnuel - 20000, 10000);
+            irppAnnuel += tranche * 0.30;
+        }
+        if (salaireImposableAnnuel > 30000) {
+            const tranche = Math.min(salaireImposableAnnuel - 30000, 10000);
+            irppAnnuel += tranche * 0.33;
+        }
+        if (salaireImposableAnnuel > 40000) {
+            const tranche = Math.min(salaireImposableAnnuel - 40000, 10000);
+            irppAnnuel += tranche * 0.36;
+        }
+        if (salaireImposableAnnuel > 50000) {
+            const tranche = Math.min(salaireImposableAnnuel - 50000, 20000);
+            irppAnnuel += tranche * 0.38;
+        }
+        if (salaireImposableAnnuel > 70000) {
+            const tranche = Math.min(salaireImposableAnnuel - 70000, Infinity);
+            irppAnnuel += tranche * 0.40;
+        }
+        const irppMensuel = irppAnnuel / 12;
+        
+        // 6. Calcul CSS (0.5% du salaire imposable après déductions)
+        const css = salaireImposableAvecDeduction * 0.005;
+        
+        // 7. Salaire net (sans avance pour le calcul itératif)
+        const salaireNet = salaireBrut - cnss - irppMensuel - css;
+        
+        return {
+            salaireBrut,
+            cnss,
+            salaireImposableSansDeduction,
+            irppMensuel,
+            css,
+            salaireNet
+        };
+    }
+
+    function calculateGrossFromNet(salaireNetTarget, isChefFamille, nbEnfants, complements, maxIterations = 100) {
+        let salaireBrutEstime = salaireNetTarget * 1.4; // Estimation initiale
+        let iteration = 0;
+        let precision = 0.01; // Précision en dinars
+        
+        while (iteration < maxIterations) {
+            const totalComplements = complements.reduce((sum, comp) => sum + comp.amount, 0);
+            const salaireBrutTotal = salaireBrutEstime + totalComplements;
+            
+            const result = calculateNetFromGross(salaireBrutTotal, isChefFamille, nbEnfants);
+            const difference = result.salaireNet - salaireNetTarget;
+            
+            if (Math.abs(difference) < precision) {
+                return {
+                    salaireBase: salaireBrutEstime,
+                    salaireBrutTotal,
+                    result,
+                    iterations: iteration + 1
+                };
+            }
+            
+            // Ajustement du salaire brut estimé
+            salaireBrutEstime -= difference * 0.8; // Facteur de convergence
+            iteration++;
+        }
+        
+        // Si pas de convergence, retourner la meilleure estimation
+        const totalComplements = complements.reduce((sum, comp) => sum + comp.amount, 0);
+        const salaireBrutTotal = salaireBrutEstime + totalComplements;
+        const result = calculateNetFromGross(salaireBrutTotal, isChefFamille, nbEnfants);
+        
+        return {
+            salaireBase: salaireBrutEstime,
+            salaireBrutTotal,
+            result,
+            iterations: maxIterations
+        };
+    }
+
+    document.getElementById('calculer').addEventListener('click', function() {
+        // Récupération des valeurs de base
+        const isChefFamille = document.getElementById('chef-famille').checked;
+        const nbEnfants = parseInt(document.getElementById('enfants').value) || 0;
+        const calculationMode = document.getElementById('calculation-mode').value;
+        const inputValue = parseFloat(document.getElementById('salaire-base').value) || 0;
+        const avance = parseFloat(document.getElementById('avance').value) || 0;
+        
+        // Calcul des compléments de salaire
+        const complements = [];
+        
+        for (let i = 1; i <= salaryCounter; i++) {
+            const nameField = document.getElementById(`salary-name-${i}`);
+            const amountField = document.getElementById(`salary-amount-${i}`);
+            
+            if (nameField && amountField) {
+                const name = nameField.value.trim();
+                const amount = parseFloat(amountField.value) || 0;
+                
+                if (name && amount > 0) {
+                    complements.push({ name, amount });
+                }
+            }
+        }
+        
+        let salaireBase, salaireBrut, result, iterations = 0;
+        
+        if (calculationMode === 'brut-to-net') {
+            // Calcul normal : du brut vers le net
+            salaireBase = inputValue;
+            const totalComplements = complements.reduce((sum, comp) => sum + comp.amount, 0);
+            salaireBrut = salaireBase + totalComplements;
+            result = calculateNetFromGross(salaireBrut, isChefFamille, nbEnfants);
+            
+            document.getElementById('calculation-info').innerHTML = 
+                '<strong>Mode de calcul :</strong> Salaire net calculé à partir du salaire brut';
+        } else {
+            // Calcul inverse : du net vers le brut
+            const salaireNetTarget = inputValue;
+            const calculation = calculateGrossFromNet(salaireNetTarget, isChefFamille, nbEnfants, complements);
+            
+            salaireBase = calculation.salaireBase;
+            salaireBrut = calculation.salaireBrutTotal;
+            result = calculation.result;
+            iterations = calculation.iterations;
+            
+            document.getElementById('calculation-info').innerHTML = 
+                `<strong>Mode de calcul :</strong> Salaire brut calculé à partir du salaire net souhaité (${salaireNetTarget.toFixed(3)} DT)`;
+        }
+        
+        // Calcul du salaire net final avec avance
+        const salaireNetFinal = result.salaireNet - avance;
+        
+        // Affichage des résultats
+        document.getElementById('s-base-label').textContent = 
+            calculationMode === 'net-to-brut' ? 'Salaire de base calculé:' : 'Salaire de base:';
+        document.getElementById('s-base').textContent = salaireBase.toFixed(3) + ' DT';
+        
+        // Mise à jour du titre de la section
+        document.getElementById('breakdown-title').textContent = 
+            calculationMode === 'net-to-brut' ? 'Composition du Salaire Brut (Calculé):' : 'Composition du Salaire Brut:';
+        
+        // Affichage des compléments
+        const additionalBreakdown = document.getElementById('additional-breakdown');
+        additionalBreakdown.innerHTML = '';
+        complements.forEach(comp => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `
+                <span>${comp.name}:</span>
+                <span>${comp.amount.toFixed(3)} DT</span>
+            `;
+            additionalBreakdown.appendChild(div);
+        });
+        
+        // Affichage des autres résultats
+        document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
+        document.getElementById('s-cnss').textContent = result.cnss.toFixed(3) + ' DT';
+        document.getElementById('s-imposable').textContent = result.salaireImposableSansDeduction.toFixed(3) + ' DT';
+        document.getElementById('s-irpp').textContent = result.irppMensuel.toFixed(3) + ' DT';
+        document.getElementById('s-css').textContent = result.css.toFixed(3) + ' DT';
+        document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
+        document.getElementById('s-net').textContent = salaireNetFinal.toFixed(3) + ' DT';
+        
+        // Affichage des informations sur les itérations pour le calcul inverse
+        const iterationsInfo = document.getElementById('iterations-info');
+        if (calculationMode === 'net-to-brut') {
+            iterationsInfo.textContent = `Calcul convergé en ${iterations} itération(s)`;
+        } else {
+            iterationsInfo.textContent = '';
+        }
+        
+        document.getElementById('results').style.display = 'block';
+    });
+
+    // Ajouter un premier champ de complément par défaut
+    addSalaryField();
+
+    function ficheDePaix() {
+        year = 2025;
+        console.log(year);
+        document.getElementById('p-year').textContent = year.toString();
+        window.location.href = './template_fiche-de-paix/fiche_de_paix.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Paie Tunisien</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* [Previous CSS styles remain the same until the PDF Template section] */
+
+        /* PDF Template Styles - Updated for single page */
+        .pdf-template {
+            display: none;
+            width: 210mm;
+            height: 297mm; /* Fixed height for A4 */
+            background: white;
+            padding: 10mm; /* Reduced padding */
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 10px; /* Smaller base font size */
+            position: relative;
+            overflow: hidden; /* Prevent content from overflowing */
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px; /* Reduced margin */
+            border-bottom: 1px solid #333; /* Thinner border */
+            padding-bottom: 10px; /* Reduced padding */
+        }
+
+        .company-info {
+            flex: 1;
+            font-size: 9px; /* Smaller font for company info */
+        }
+
+        .company-info h2 {
+            font-size: 12px; /* Slightly larger for company name */
+            margin: 5px 0;
+        }
+
+        .bulletin-title {
+            text-align: center;
+            font-size: 16px; /* Slightly smaller title */
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .period-info {
+            text-align: right;
+            font-size: 10px;
+        }
+
+        .employee-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px; /* Reduced gap */
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 3px;
+            font-size: 9px; /* Smaller font */
+        }
+
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px; /* Reduced margin */
+            font-size: 9px; /* Smaller font */
+        }
+
+        .salary-table th,
+        .salary-table td {
+            padding: 4px; /* Reduced padding */
+            text-align: left;
+        }
+
+        .salary-table th {
+            background: #e0e0e0;
+            font-weight: bold;
+        }
+
+        .salary-table .number {
+            text-align: right;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px; /* Reduced margin */
+            padding-top: 10px; /* Reduced padding */
+            border-top: 1px solid #ccc;
+            font-size: 9px; /* Smaller font */
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 150px; /* Narrower boxes */
+        }
+
+        .signature-box div {
+            height: 40px; /* Shorter signature box */
+            border: 1px solid #ccc;
+            margin-top: 5px;
+        }
+
+        /* [Rest of the CSS remains the same] */
+    </style>
+</head>
+
+<body>
+    <!-- [Previous HTML remains the same until the PDF template section] -->
+
+    <!-- PDF Template -->
+    <div id="pdf-template" class="pdf-template">
+        <div class="pdf-header">
+            <div class="company-info">
+                <img src="template_fiche-de-paix/smartech_logo.png" style="width: 80px; height: 40px; margin-left: 0;" alt="Logo SMARTECH SOLUTIONS">
+                <h2>SMARTECH SOLUTIONS</h2>
+                <p>IMMEUBLE CITY LAKE CENTER BLOC A</p>
+                <p>Tel: +216 29 904 904</p>
+                <p>CNSS EMPLOYEUR: 262168-74</p>
+            </div>
+            <div class="period-info">
+                <div class="bulletin-title">BULLETIN DE PAIE</div>
+                <p id="pdf-period">AVRIL 2025</p>
+            </div>
+        </div>
+
+        <div class="employee-section">
+            <div>
+                <p><strong>Matricule:</strong> <span id="pdf-matricule">${selectedEmployee.matricule}</span></p>
+                <p><strong>M. </strong><span id="pdf-employee-name">NOM PRENOM</span></p>
+                <p><strong>Emploi:</strong> <span id="pdf-position">POSTE</span></p>
+                <p><strong>Mode de Payement:</strong> Virement</p>
+            </div>
+            <div>
+                <p><strong>Situation familiale:</strong> <span id="pdf-situation">Situation</span></p>
+                <p><strong>Nombre d'enfants:</strong> <span id="pdf-enfants">0</span></p>
+                <p><strong>Nationalité:</strong> Tunisienne</p>
+                <p><strong>solde de congé:</strong><span id="pdf-conge">0</span></p>
+            </div>
+        </div>
+
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">N°</th>
+                    <th style="width: 30%;">Désignation</th>
+                    <th style="width: 10%;">Nombre</th>
+                    <th style="width: 15%;">Base</th>
+                    <th style="width: 10%;">Taux</th>
+                    <th style="width: 15%;">Gain</th>
+                    <th style="width: 15%;">Retenue</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-salary-details">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 5px;">
+            <p><strong>Salaire Net: </strong><span id="pdf-brut-summary">0.000 DT</span></p>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature-box">
+                <p><strong>Emargement & Cachet Employeur</strong></p>
+                <div></div>
+            </div>
+            <div class="signature-box">
+                <p><strong>Emargement Employé</strong></p>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [Rest of the HTML and JavaScript remains the same] -->
+</body>
+</html>

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Paie Tunisien</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .form-group h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        select {
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        input,
+        button {
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .salary-addition {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+
+        .salary-addition input[type="text"] {
+            flex: 2;
+        }
+
+        .salary-addition input[type="number"] {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            min-width: 40px;
+        }
+
+        .add-salary-btn,
+        .calculate-btn,
+        .pdf-btn,
+        .preview-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .pdf-btn {
+            background: #2196F3;
+        }
+
+        .preview-btn {
+            background: #FF9800;
+        }
+
+        .add-salary-btn:hover,
+        .calculate-btn:hover {
+            background: #45a049;
+        }
+
+        .pdf-btn:hover {
+            background: #1976D2;
+        }
+
+        .preview-btn:hover {
+            background: #F57C00;
+        }
+
+        .remove-btn:hover {
+            background: #d32f2f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        #results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+            border-radius: 8px;
+            border: 1px solid #b3d9ff;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item.total {
+            font-weight: bold;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .salary-breakdown {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar img {
+            width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .sidebar h1 {
+            font-size: 18px;
+            margin: 10px 0 5px;
+        }
+
+        .sidebar p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* PDF Template Styles */
+        .pdf-template {
+            display: none;
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .bulletin-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .period-info {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .employee-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .salary-table th,
+        .salary-table td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .salary-table th {
+            background: #e0e0e0;
+            font-weight: bold;
+        }
+
+        .salary-table .number {
+            text-align: right;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+
+        .net-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 200px;
+        }
+
+        /* Modal styles for PDF preview */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <h1>SMARTECH SOLUTIONS</h1>
+            <p>Système de Paie Professionnel</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="cl-2Ways.html" class="nav-link">Calculateur</a>
+            <a href="template.html" class="nav-link active">Calcule par Employé</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Calculateur de Paie Tunisien</h2>
+
+        <div class="form-group">
+            <h3>Sélection de l'Employé</h3>
+            <label for="employee-select">Choisir un employé:</label>
+            <select id="employee-select" onchange="loadEmployeeData()">
+                <option value="">-- Sélectionner un employé --</option>
+            </select>
+
+            <div id="employee-info"
+                style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 5px;">
+                <h4>Informations de l'employé:</h4>
+                <p><strong>Nom:</strong> <span id="emp-name"></span></p>
+                <p><strong>CIN:</strong> <span id="emp-cin"></span></p>
+                <p><strong>Email:</strong> <span id="emp-email"></span></p>
+                <p><strong>Chef de famille:</strong> <span id="emp-chef"></span></p>
+                <p><strong>Nombre d'enfants:</strong> <span id="emp-enfants"></span></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <h3>Composantes du Salaire</h3>
+            <label for="salaire-base">Salaire de base (DT):</label>
+            <input type="number" id="salaire-base" step="0.001" min="0" value="0">
+
+            <div id="additional-salaries">
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Compléments de salaire:</h4>
+            </div>
+
+            <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de
+                salaire</button>
+        </div>
+
+        <div class="form-group">
+            <h3>Déductions</h3>
+            <label for="avance">Avance (DT):</label>
+            <input type="number" id="avance" step="0.001" min="0" value="0">
+        </div>
+         <div class="form-group">
+            <h3>Congés</h3>
+            <label for="conge">Solde de congé:</label>
+            <input type="number" id="conge" step="0.001" min="0" value="0">
+        </div>
+
+        <div class="button-group">
+            <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
+            <button class="preview-btn" id="preview-pdf" onclick="previewPDF()" style="display: none;">Aperçu PDF</button>
+            <button class="pdf-btn" id="generate-pdf" onclick="generatePDF()" style="display: none;">Générer PDF</button>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h3>Détail du Calcul</h3>
+
+            <div class="salary-breakdown">
+                <h4>Composition du Salaire Brut:</h4>
+                <div class="result-item">
+                    <span>Salaire de base:</span>
+                    <span id="s-base"></span>
+                </div>
+                <div id="additional-breakdown"></div>
+                <div class="result-item" style="font-weight: bold; border-top: 2px solid #333; padding-top: 10px;">
+                    <span>Salaire brut total:</span>
+                    <span id="s-brut"></span>
+                </div>
+            </div>
+
+            <div class="result-item">
+                <span>Retenue CNSS (9.68%):</span>
+                <span id="s-cnss"></span>
+            </div>
+            <div class="result-item">
+                <span>Salaire imposable:</span>
+                <span id="s-imposable"></span>
+            </div>
+            <div class="result-item">
+                <span>Retenue IRPP:</span>
+                <span id="s-irpp"></span>
+            </div>
+            <div class="result-item">
+                <span>Contribution sociale (0.5%):</span>
+                <span id="s-css"></span>
+            </div>
+            <div class="result-item">
+                <span>Avance:</span>
+                <span id="s-avance"></span>
+            </div>
+            <div class="result-item total">
+                <span>Salaire Net:</span>
+                <span id="s-net"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Template -->
+    <div id="pdf-template" class="pdf-template">
+        <div class="pdf-header">
+            <div class="company-info">
+                <img src="template_fiche-de-paix/smartech_logo.png" style="width: 100px; height: 60px; margin-left: 50px;" alt="Logo SMARTECH SOLUTIONS">
+                <h2>SMARTECH SOLUTIONS</h2>
+                <p>IMMEUBLE CITY LAKE CENTER BLOC A</p>
+                <p>Tel: +216 29 904 904</p>
+                <p>CNSS EMPLOYEUR: 262168-74</p>
+            </div>
+            <div class="period-info">
+                <div class="bulletin-title">BULLETIN DE PAIE</div>
+                <p id="pdf-period">AVRIL 2025</p>
+            </div>
+        </div>
+
+        <div class="employee-section">
+            <div>
+                <p><strong>Matricule:</strong> <span id="pdf-matricule">00</span></p>
+                <p><strong>M. </strong><span id="pdf-employee-name">NOM PRENOM</span></p>
+                <p><strong>Emploi:</strong> <span id="pdf-position">POSTE</span></p>
+                <p><strong>Mode de Payement:</strong> Virement</p>
+            </div>
+            <div>
+                <p><strong>Situation familiale:</strong> <span id="pdf-situation">Situation</span></p>
+                <p><strong>Nombre d'enfants:</strong> <span id="pdf-enfants">0</span></p>
+                <p><strong>Nationalité:</strong> Tunisienne</p>
+                <p><strong>solde de congé:</strong><span id="pdf-conge">0</span></p>
+            </div>
+        </div>
+
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Désignation</th>
+                    <th>Nombre</th>
+                    <th>Base</th>
+                    <th>Taux</th>
+                    <th>Gain</th>
+                    <th>Retenue</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-salary-details">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+            <div>
+                <p><strong>Salaire Net:</strong> <span id="pdf-brut-summary">0.000</span></p>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature-box">
+                <p><strong>Emargement & Cachet Employeur</strong></p>
+                <div style="height: 60px; border: 1px solid #ccc; margin-top: 10px;"></div>
+            </div>
+            <div class="signature-box">
+                <p><strong>Emargement Employé</strong></p>
+                <div style="height: 60px; border: 1px solid #ccc; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div id="pdf-preview-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="pdf-preview-content"></div>
+            <div class="modal-buttons">
+                <button class="pdf-btn" onclick="generatePDF()">Générer PDF</button>
+                <button class="preview-btn" onclick="closeModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let salaryCounter = 0;
+        let employeesData = null;
+        let selectedEmployee = null;
+        let calculationResults = null;
+
+        // Employee data from JSON
+        const employeesJSON = {
+            "employees": [
+                {
+                    "firstName": "Walid",
+                    "lastName": "Dhay",
+                    "cin": "04815852",
+                    "dateOfBirth": "1990-04-19",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904901",
+                    "email": "walid.dhay@smartech-solutions.net",
+                    "isChefFamille": true,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-04-14",
+                    "salaire": 3548.994,
+                    "contrat": "CDI",
+                    "poste": "Responsable administratif et financier",
+                    "m-cnss": "16833424-04" ,
+                    "matricule": "49"
+                },
+                {
+                    "firstName": "Amira",
+                    "lastName": "Boulaabi",
+                    "cin": "13604503",
+                    "dateOfBirth": "1991-07-14",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904920",
+                    "email": "contact@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2020-06-01",
+                    "salaire": 1371.095,
+                    "contrat": "CDI",
+                    "poste": "Attache administratif",
+                    "m-cnss": "16865386-02" ,
+                    "matricule": "40"
+                },
+                {
+                    "firstName": "Alaa",
+                    "lastName": "Arfeoui",
+                    "cin": "09922361",
+                    "dateOfBirth": "1993-09-13",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904908",
+                    "email": "alaa.arfeoui@smartech-solutions.net",
+                    "isChefFamille": true,
+                    "nbEnfants": 1,
+                    "dateOfRecrutement": "2023-11-12",
+                    "salaire": 7098.633,
+                    "contrat": "CDI",
+                    "poste": "Lead civil and pipeline engineer",
+                    "m-cnss": "17413096-01" ,
+                    "matricule": "42"
+                },
+                {
+                    "firstName": "Anis",
+                    "lastName": "Haouas",
+                    "cin": "08445551",
+                    "dateOfBirth": "1981-08-18",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904913",
+                    "email": "anis.haouas@smartech-solutions.net",
+                    "isChefFamille": true,
+                    "nbEnfants": 3,
+                    "dateOfRecrutement": "2025-04-01",
+                    "salaire": 3868.043,
+                    "contrat": "CDI",
+                    "poste": "Responsable Achat",
+                    "m-cnss": "12933747-06" ,
+                    "matricule": "45"
+                },
+                {
+                    "firstName": "Sabrine",
+                    "lastName": "Bettaieb",
+                    "cin": "09868181",
+                    "dateOfBirth": "1997-05-08",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904919",
+                    "email": "sabrine.bettaieb@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2024-11-03",
+                    "salaire": 1200.000,
+                    "contrat": "CIVP",
+                    "poste": "Automation Engineer",
+                    "m-cnss": "" ,
+                    "matricule": "46"
+                },
+                {
+                    "firstName": "Ali",
+                    "lastName": "Chouaya",
+                    "cin": "05532742",
+                    "dateOfBirth": "1981-08-18",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904907",
+                    "email": "Ali.chouaya@smartech-solutions.net",
+                    "isChefFamille": true,
+                    "nbEnfants": 2,
+                    "dateOfRecrutement": "2025-04-01",
+                    "salaire": 6179.100,
+                    "contrat": "CDI",
+                    "poste": "Upstream Engineer",
+                    "m-cnss": "16034815-06" ,
+                    "matricule": "44"
+                },
+                {
+                    "firstName": "Ghada",
+                    "lastName": "Saad",
+                    "cin": "14324736",
+                    "dateOfBirth": "2000-07-20",
+                    "address": "Sfax, Tunisie",
+                    "phone": "",
+                    "email": "ghada.saad@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-02-03",
+                    "salaire": 1000.000,
+                    "contrat": "CIVP",
+                    "poste": "Automation Engineer",
+                    "m-cnss": "" ,
+                    "matricule": "48"
+                },
+                {
+                    "firstName": "Aymen",
+                    "lastName": "Khiari",
+                    "cin": "04951765",
+                    "dateOfBirth": "1999-09-10",
+                    "address": "Sfax, Tunisie",
+                    "phone": "",
+                    "email": "aymen.khiari@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-02-03",
+                    "salaire": 1300.000,
+                    "contrat": "CIVP",
+                    "poste": "Automation Engineer",
+                    "m-cnss": "" ,
+                    "matricule": "47"
+                },
+                {
+                    "firstName": "Sabrine",
+                    "lastName": "Ben Rhouma",
+                    "cin": "09852296",
+                    "dateOfBirth": "1999-09-10",
+                    "address": "Sfax, Tunisie",
+                    "phone": "27898386",
+                    "email": "sabrine.ben.rhouma@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-07-01",
+                    "salaire": 2740.058,
+                    "contrat": "CDI",
+                    "poste": "Responsable qualité QA/QC HSSE",
+                    "m-cnss": "" ,
+                    "matricule": "51"
+                },
+                {
+                    "firstName": "Khawla",
+                    "lastName": "Abd Alatif",
+                    "cin": "06587973",
+                    "dateOfBirth": "1995-09-17",
+                    "address": "Sfax, Tunisie",
+                    "phone": "93992123",
+                    "email": "khawla@smartech-solutions.net",
+                    "isChefFamille": false,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-06-02",
+                    "salaire": 3063.460,
+                    "contrat": "CDI",
+                    "poste": "Process Engineer",
+                    "m-cnss": "" ,
+                    "matricule": "50"
+                }
+            ]
+        };
+
+        // Initialize the application
+        function initializeApp() {
+            employeesData = employeesJSON;
+            populateEmployeeSelect();
+            addSalaryField(); // Add default salary field
+        }
+
+        // Populate the employee select dropdown
+        function populateEmployeeSelect() {
+            const select = document.getElementById('employee-select');
+            select.innerHTML = '<option value="">-- Sélectionner un employé --</option>';
+
+            employeesData.employees.forEach((employee, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${employee.firstName} ${employee.lastName} - ${employee.cin}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Load selected employee data
+        function loadEmployeeData() {
+            const select = document.getElementById('employee-select');
+            const selectedIndex = select.value;
+
+            if (selectedIndex === '') {
+                document.getElementById('employee-info').style.display = 'none';
+                selectedEmployee = null;
+                document.getElementById('salaire-base').value = 0;
+                document.getElementById('generate-pdf').style.display = 'none';
+                document.getElementById('preview-pdf').style.display = 'none';
+                return;
+            }
+
+            selectedEmployee = employeesData.employees[selectedIndex];
+
+            // Display employee info
+            document.getElementById('emp-name').textContent = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
+            document.getElementById('emp-cin').textContent = selectedEmployee.cin;
+            document.getElementById('emp-email').textContent = selectedEmployee.email;
+            document.getElementById('emp-chef').textContent = selectedEmployee.isChefFamille ? 'Oui' : 'Non';
+            document.getElementById('emp-enfants').textContent = selectedEmployee.nbEnfants;
+            document.getElementById('employee-info').style.display = 'block';
+            document.getElementById('pdf-matricule').textContent = selectedEmployee.matricule || '00';
+
+            // Populate salary field
+            document.getElementById('salaire-base').value = selectedEmployee.salaire || 0;
+        }
+
+        function addSalaryField() {
+            salaryCounter++;
+            const container = document.getElementById('additional-salaries');
+            const div = document.createElement('div');
+            div.className = 'salary-addition';
+            div.innerHTML = `
+                <input type="text" placeholder="Nom du complément (ex: Prime, Indemnité...)" id="salary-name-${salaryCounter}">
+                <input type="number" step="0.001" min="0" placeholder="Montant (DT)" id="salary-amount-${salaryCounter}">
+                <button type="button" class="remove-btn" onclick="removeSalaryField(${salaryCounter})">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeSalaryField(id) {
+            const field = document.querySelector(`#salary-name-${id}`).closest('.salary-addition');
+            field.remove();
+        }
+
+        function previewPDF() {
+            if (!selectedEmployee || !calculationResults) {
+                alert('Veuillez d\'abord calculer le salaire');
+                return;
+            }
+
+            // Update PDF template with calculated values
+            updatePDFTemplate();
+
+            // Show the PDF preview in modal
+            const pdfTemplate = document.getElementById('pdf-template');
+            const previewContent = document.getElementById('pdf-preview-content');
+            
+            // Clone the template to avoid affecting the original
+            const clone = pdfTemplate.cloneNode(true);
+            clone.style.display = 'block';
+            clone.style.width = '100%';
+            clone.style.minHeight = 'auto';
+            clone.style.padding = '20px';
+            
+            // Clear previous content and add the clone
+            previewContent.innerHTML = '';
+            previewContent.appendChild(clone);
+            
+            // Show the modal
+            document.getElementById('pdf-preview-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('pdf-preview-modal').style.display = 'none';
+        }
+
+        function generatePDF() {
+            if (!selectedEmployee || !calculationResults) {
+                alert('Veuillez d\'abord calculer le salaire');
+                return;
+            }
+
+            // Update PDF template with calculated values
+            updatePDFTemplate();
+
+            // Generate PDF
+            const element = document.getElementById('pdf-template');
+            element.style.display = 'block';
+
+            const opt = {
+                margin: 0.5,
+                filename: `bulletin_paie_${selectedEmployee.firstName}_${selectedEmployee.lastName}_${new Date().toISOString().slice(0, 7)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Use html2pdf if available, otherwise fallback to basic jsPDF
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    element.style.display = 'none';
+                    closeModal();
+                });
+            } else {
+                // Fallback using html2canvas + jsPDF
+                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    const imgWidth = 210;
+                    const pageHeight = 295;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save(`bulletin_paie_${selectedEmployee.firstName}_${selectedEmployee.lastName}_${new Date().toISOString().slice(0, 7)}.pdf`);
+                    element.style.display = 'none';
+                    closeModal();
+                });
+            }
+        }
+
+        function updatePDFTemplate() {
+            const currentDate = new Date();
+            const monthNames = ["JANVIER", "FÉVRIER", "MARS", "AVRIL", "MAI", "JUIN",
+                "JUILLET", "AOÛT", "SEPTEMBRE", "OCTOBRE", "NOVEMBRE", "DÉCEMBRE"];
+            
+            // Update period
+            document.getElementById('pdf-period').textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            
+            // Update employee info
+            document.getElementById('pdf-employee-name').textContent = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
+            document.getElementById('pdf-position').textContent = selectedEmployee.poste;
+            document.getElementById('pdf-situation').textContent = selectedEmployee.isChefFamille ? 'Chef de famille' : 'Célibataire';
+            document.getElementById('pdf-enfants').textContent = selectedEmployee.nbEnfants;
+            document.getElementById('pdf-conge').textContent = " " + document.getElementById('conge').value + ' jours' || '0 jours';
+
+            // Update salary details table
+            const tableBody = document.getElementById('pdf-salary-details');
+            tableBody.innerHTML = '';
+            
+            let rowCounter = 1;
+            
+            // Base salary row
+            const baseRow = document.createElement('tr');
+            baseRow.innerHTML = `
+                <td>${rowCounter++}</td>
+                <td>Salaire de Base Mensuel</td>
+                <td>26.000</td>
+                <td>${calculationResults.salaireBase.toFixed(3)}</td>
+                <td>1.000</td>
+                <td class="number">${calculationResults.salaireBase.toFixed(3)}</td>
+                <td class="number">-</td>
+            `;
+            tableBody.appendChild(baseRow);
+            
+            // Additional salary components
+            calculationResults.complements.forEach(comp => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>${comp.name}</td>
+                    <td>1.000</td>
+                    <td>${comp.amount.toFixed(3)}</td>
+                    <td>1.000</td>
+                    <td class="number">${comp.amount.toFixed(3)}</td>
+                    <td class="number">-</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Total brut row
+            const totalBrutRow = document.createElement('tr');
+            totalBrutRow.className = 'total-row';
+            totalBrutRow.innerHTML = `
+                <td></td>
+                <td><strong>Total Brut</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="number"><strong>${calculationResults.salaireBrut.toFixed(3)}</strong></td>
+                <td class="number">-</td>
+            `;
+            tableBody.appendChild(totalBrutRow);
+            
+            // Deductions (only for CDI contracts)
+            if (selectedEmployee.contrat === "CDI") {
+                // CNSS row
+                const cnssRow = document.createElement('tr');
+                cnssRow.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>CNSS Normale</td>
+                    <td></td>
+                    <td>${calculationResults.salaireBrut.toFixed(3)}</td>
+                    <td>9.68%</td>
+                    <td class="number">-</td>
+                    <td class="number">${calculationResults.cnss.toFixed(3)}</td>
+                `;
+                tableBody.appendChild(cnssRow);
+                
+                // Salary imposable row
+                const imposableRow = document.createElement('tr');
+                imposableRow.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>Salaire Imposable</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number">${calculationResults.salaireImposableSansDeduction.toFixed(3)}</td>
+                    <td class="number">-</td>
+                `;
+                tableBody.appendChild(imposableRow);
+                
+                // IRPP row
+                const irppRow = document.createElement('tr');
+                irppRow.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>Retenue d'impôt</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number">-</td>
+                    <td class="number">${calculationResults.irppMensuel.toFixed(3)}</td>
+                `;
+                tableBody.appendChild(irppRow);
+                
+                // CSS row
+                const cssRow = document.createElement('tr');
+                cssRow.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>Contribution Sociale Solidaire</td>
+                    <td></td>
+                    <td></td>
+                    <td>0.5%</td>
+                    <td class="number">-</td>
+                    <td class="number">${calculationResults.css.toFixed(3)}</td>
+                `;
+                tableBody.appendChild(cssRow);
+                
+                // Total cotisations row
+                const totalCotisationsRow = document.createElement('tr');
+                totalCotisationsRow.className = 'total-row';
+                totalCotisationsRow.innerHTML = `
+                    <td></td>
+                    <td><strong>Total Cotisations</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number">-</td>
+                    <td class="number"><strong>${(calculationResults.cnss + calculationResults.irppMensuel + calculationResults.css).toFixed(3)}</strong></td>
+                `;
+                tableBody.appendChild(totalCotisationsRow);
+            }
+            
+            // Avance row (if applicable)
+            if (calculationResults.avance > 0) {
+                const avanceRow = document.createElement('tr');
+                avanceRow.innerHTML = `
+                    <td>${rowCounter++}</td>
+                    <td>Avance</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number">-</td>
+                    <td class="number">${calculationResults.avance.toFixed(3)}</td>
+                `;
+                tableBody.appendChild(avanceRow);
+            }
+            
+            // Net salary row
+            const netRow = document.createElement('tr');
+            netRow.className = 'total-row';
+            netRow.innerHTML = `
+                <td>${rowCounter++}</td>
+                <td><strong>Salaire Net</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="number"><strong>${calculationResults.salaireNet.toFixed(3)}</strong></td>
+                <td class="number">-</td>
+            `;
+            tableBody.appendChild(netRow);
+            
+            // Net à payer row
+            const netPayerRow = document.createElement('tr');
+            netPayerRow.className = 'total-row';
+            netPayerRow.innerHTML = `
+                <td>${rowCounter++}</td>
+                <td><strong>Net à payer</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="number"><strong>${calculationResults.salaireNet.toFixed(3)}</strong></td>
+                <td class="number">-</td>
+            `;
+            tableBody.appendChild(netPayerRow);
+            
+            // Update summary values
+            document.getElementById('pdf-brut-summary').textContent = calculationResults.salaireNet.toFixed(3);
+        }
+
+        document.getElementById('calculer').addEventListener('click', function () {
+            // Check if employee is selected
+            if (!selectedEmployee) {
+                alert('Veuillez sélectionner un employé');
+                return;
+            }
+
+            // Get employee family information
+            const isChefFamille = selectedEmployee.isChefFamille;
+            const nbEnfants = selectedEmployee.nbEnfants || 0;
+            const salaireBase = parseFloat(document.getElementById('salaire-base').value) || 0;
+
+            // Calcul des compléments de salaire
+            let totalComplements = 0;
+            const complements = [];
+
+            for (let i = 1; i <= salaryCounter; i++) {
+                const nameField = document.getElementById(`salary-name-${i}`);
+                const amountField = document.getElementById(`salary-amount-${i}`);
+
+                if (nameField && amountField) {
+                    const name = nameField.value.trim();
+                    const amount = parseFloat(amountField.value) || 0;
+
+                    if (name && amount > 0) {
+                        complements.push({ name, amount });
+                        totalComplements += amount;
+                    }
+                }
+            }
+
+            // Calcul du salaire brut
+            const salaireBrut = salaireBase + totalComplements;
+
+            // 1. Calcul CNSS (9.68% du brut)
+            const cnss = salaireBrut * 0.0968;
+
+            // 2. Salaire imposable sans déduction
+            const salaireImposableSansDeduction = salaireBrut - cnss;
+
+            // 3. Déductions
+            // a) Professionnelle (10% du salaire imposable, plafond 2000 DT annuel)
+            const deductionProAnnuelle = Math.min(salaireImposableSansDeduction * 12 * 0.10, 2000);
+            const deductionProMensuelle = deductionProAnnuelle / 12;
+
+            // b) Déductions familiales
+            let deductionFamille = 0;
+            if (isChefFamille) deductionFamille += 300;
+            deductionFamille += nbEnfants * 100;
+            const deductionFamilleMensuelle = deductionFamille / 12;
+
+            // 4. Salaire imposable après déductions
+            const salaireImposableAvecDeduction = salaireImposableSansDeduction - deductionProMensuelle - deductionFamilleMensuelle;
+
+            // 5. Calcul IRPP (annuel)
+            const salaireImposableAnnuel = salaireImposableAvecDeduction * 12;
+            let irppAnnuel = 0;
+
+            // Barème IRPP
+            if (salaireImposableAnnuel > 5000) {
+                const tranche = Math.min(salaireImposableAnnuel - 5000, 5000);
+                irppAnnuel += tranche * 0.15;
+            }
+            if (salaireImposableAnnuel > 10000) {
+                const tranche = Math.min(salaireImposableAnnuel - 10000, 10000);
+                irppAnnuel += tranche * 0.25;
+            }
+            if (salaireImposableAnnuel > 20000) {
+                const tranche = Math.min(salaireImposableAnnuel - 20000, 10000);
+                irppAnnuel += tranche * 0.30;
+            }
+            if (salaireImposableAnnuel > 30000) {
+                const tranche = Math.min(salaireImposableAnnuel - 30000, 10000);
+                irppAnnuel += tranche * 0.33;
+            }
+            if (salaireImposableAnnuel > 40000) {
+                const tranche = Math.min(salaireImposableAnnuel - 40000, 10000);
+                irppAnnuel += tranche * 0.36;
+            }
+            if (salaireImposableAnnuel > 50000) {
+                const tranche = Math.min(salaireImposableAnnuel - 50000, 20000);
+                irppAnnuel += tranche * 0.38;
+            }
+            if (salaireImposableAnnuel > 70000) {
+                const tranche = salaireImposableAnnuel - 70000;
+                irppAnnuel += tranche * 0.40;
+            }
+            const irppMensuel = irppAnnuel / 12;
+
+            // 6. Calcul CSS (0.5% du salaire imposable après déductions)
+            const css = salaireImposableAvecDeduction * 0.005;
+
+            // 7. Salaire net
+            const avance = parseFloat(document.getElementById('avance').value) || 0;
+            let salaireNet;
+
+            // Store calculation results for PDF generation
+            calculationResults = {
+                salaireBase,
+                complements,
+                salaireBrut,
+                cnss: selectedEmployee.contrat === "CIVP" ? 0 : cnss,
+                salaireImposableSansDeduction: selectedEmployee.contrat === "CIVP" ? salaireBrut : salaireImposableSansDeduction,
+                irppMensuel: selectedEmployee.contrat === "CIVP" ? 0 : irppMensuel,
+                css: selectedEmployee.contrat === "CIVP" ? 0 : css,
+                avance,
+                salaireNet: selectedEmployee.contrat === "CIVP" ? salaireBrut - avance : salaireBrut - cnss - irppMensuel - css - avance
+            };
+
+            // Affichage des résultats
+            document.getElementById('s-base').textContent = salaireBase.toFixed(3) + ' DT';
+
+            // Affichage des compléments
+            const additionalBreakdown = document.getElementById('additional-breakdown');
+            additionalBreakdown.innerHTML = '';
+            complements.forEach(comp => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `
+                    <span>${comp.name}:</span>
+                    <span>${comp.amount.toFixed(3)} DT</span>
+                `;
+                additionalBreakdown.appendChild(div);
+            });
+
+            if (selectedEmployee.contrat === "CIVP") {
+                salaireNet = salaireBrut - avance;
+                document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
+                document.getElementById('s-cnss').textContent = '0.000 DT';
+                document.getElementById('s-imposable').textContent = salaireBrut.toFixed(3) + ' DT';
+                document.getElementById('s-irpp').textContent = '0.000 DT';
+                document.getElementById('s-css').textContent = '0.000 DT';
+                document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
+                document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
+            } else {
+                salaireNet = salaireBrut - cnss - irppMensuel - css - avance;
+                document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
+                document.getElementById('s-cnss').textContent = cnss.toFixed(3) + ' DT';
+                document.getElementById('s-imposable').textContent = salaireImposableSansDeduction.toFixed(3) + ' DT';
+                document.getElementById('s-irpp').textContent = irppMensuel.toFixed(3) + ' DT';
+                document.getElementById('s-css').textContent = css.toFixed(3) + ' DT';
+                document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
+                document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
+            }
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('generate-pdf').style.display = 'inline-block';
+            document.getElementById('preview-pdf').style.display = 'inline-block';
+        });
+
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+
+</html>

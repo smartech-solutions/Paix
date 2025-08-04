@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculateur de Paie Tunisien</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -101,7 +103,8 @@
         }
 
         .add-salary-btn,
-        .calculate-btn {
+        .calculate-btn,
+        .pdf-btn {
             background: #4CAF50;
             color: white;
             border: none;
@@ -111,13 +114,32 @@
             font-weight: bold;
         }
 
+        .pdf-btn {
+            background: #2196F3;
+            margin-left: 10px;
+        }
+
         .add-salary-btn:hover,
         .calculate-btn:hover {
             background: #45a049;
         }
 
+        .pdf-btn:hover {
+            background: #1976D2;
+        }
+
         .remove-btn:hover {
             background: #d32f2f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
         }
 
         #results {
@@ -159,74 +181,185 @@
         }
 
         .sidebar {
-      width: 250px;
-      background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
-      color: white;
-      padding: 20px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      min-height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-    }
+            width: 250px;
+            background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .sidebar img {
-      width: 100%;
-      max-height: 80px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
+        .sidebar img {
+            width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
 
-    .sidebar h1 {
-      font-size: 18px;
-      margin: 10px 0 5px;
-    }
+        .sidebar h1 {
+            font-size: 18px;
+            margin: 10px 0 5px;
+        }
 
-    .sidebar p {
-      font-size: 12px;
-      opacity: 0.9;
-    }
+        .sidebar p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
 
-    .nav-links {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+        .nav-links {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    .nav-link {
-      color: white;
-      text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: background 0.3s;
-    }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
 
-    .nav-link:hover,
-    .nav-link.active {
-      background: rgba(255, 255, 255, 0.2);
-    }
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
-        
+        /* PDF Template Styles */
+        .pdf-template {
+            display: none;
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .bulletin-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .period-info {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .employee-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .salary-table th,
+        .salary-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .salary-table th {
+            background: #e0e0e0;
+            font-weight: bold;
+        }
+
+        .salary-table .number {
+            text-align: right;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+
+        .net-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 200px;
+        }
+
+        .pdf-btn {
+            background: #2196F3;
+            margin-left: 10px;
+        }
+
+        #save-pdf {
+            background: #4CAF50;
+        }
+
+        #save-pdf:hover {
+            background: #45a049;
+        }
     </style>
 </head>
 
 <body>
     <div class="sidebar">
-    <div class="logo-section">
-      <img src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo"/>
-      <h1>SMARTECH SOLUTIONS</h1>
-      <p>Système de Paie Professionnel</p>
+        <div class="logo-section">
+            <h1>SMARTECH SOLUTIONS</h1>
+            <p>Système de Paie Professionnel</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="cl.html" class="nav-link">Calculateur</a>
+            <a href="cpe.html" class="nav-link active">Calcule par Employé</a>
+        </div>
     </div>
 
-    <div class="nav-links">
-      <a href="cl.html" class="nav-link active">Calculateur</a>
-      <a href="cpe.html" class="nav-link">Calcule par Employé</a>
-    </div>
-  </div>
     <div class="container">
         <h2>Calculateur de Paie Tunisien</h2>
 
@@ -267,7 +400,12 @@
             <input type="number" id="avance" step="0.001" min="0" value="0">
         </div>
 
-        <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
+        <div class="button-group">
+            <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
+            <button class="pdf-btn" id="generate-pdf" onclick="viewPayslip()" style="display: none;">Voir Fiche de
+                paie</button> <button class="pdf-btn" id="save-pdf" onclick="savePDF()"
+                style="display: none; background: #4CAF50;">Enregistrer PDF</button>
+        </div>
 
         <div id="results" style="display: none;">
             <h3>Détail du Calcul</h3>
@@ -312,10 +450,87 @@
         </div>
     </div>
 
+    <!-- PDF Template -->
+    <div id="pdf-template" class="pdf-template">
+        <div class="pdf-header">
+            <div class="company-info">
+                <h2>SMARTECH SOLUTIONS</h2>
+                <p>IMMEUBLE CITY LAKE CENTER BLOC A</p>
+                <p>BUR A22-A23 LES JARDINS DU LAC</p>
+                <p>Tel: 71 123 456</p>
+                <p>CNSS EMPLOYEUR: 17138717 03</p>
+            </div>
+            <div class="period-info">
+                <div class="bulletin-title">BULLETIN DE PAIE</div>
+                <p id="pdf-period">AVRIL 2025</p>
+            </div>
+        </div>
+
+        <div class="employee-section">
+            <div>
+                <p><strong>Matricule:</strong> <span id="pdf-matricule">036</span></p>
+                <p><strong>M. </strong><span id="pdf-employee-name">NOM PRENOM</span></p>
+                <p><strong>Emploi:</strong> <span id="pdf-position">POSTE</span></p>
+                <p><strong>Mode de Payement:</strong> Virement</p>
+                <p><strong>Nationalité:</strong> Tunisienne</p>
+            </div>
+            <div>
+                <p><strong>Adresse:</strong> <span id="pdf-address">ADRESSE</span></p>
+                <p><strong>Situation familiale:</strong> <span id="pdf-situation">Situation</span></p>
+                <p><strong>Nombre d'enfants:</strong> <span id="pdf-enfants">0</span></p>
+                <p><strong>Monnaie de la paie:</strong> TND</p>
+            </div>
+        </div>
+
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Désignation</th>
+                    <th>Nombre</th>
+                    <th>Base</th>
+                    <th>Taux</th>
+                    <th>Gain</th>
+                    <th>Retenue</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-salary-details">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+
+        <div class="net-total">
+            NET À PAYER: <span id="pdf-net-total">0.000 DT</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+            <div>
+                <p><strong>Salaire Brut:</strong> <span id="pdf-brut-summary">0.000</span></p>
+                <p><strong>Ret. CNSS:</strong> <span id="pdf-cnss-summary">0.000</span></p>
+            </div>
+            <div>
+                <p><strong>Salaire Imposable:</strong> <span id="pdf-imposable-summary">0.000</span></p>
+                <p><strong>I.R.P.P:</strong> <span id="pdf-irpp-summary">0.000</span></p>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature-box">
+                <p><strong>Emargement & Cachet Employeur</strong></p>
+                <div style="height: 60px; border: 1px solid #ccc; margin-top: 10px;"></div>
+            </div>
+            <div class="signature-box">
+                <p><strong>Emargement Employé</strong></p>
+                <div style="height: 60px; border: 1px solid #ccc; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let salaryCounter = 0;
         let employeesData = null;
         let selectedEmployee = null;
+        let calculationResults = null;
 
         // Employee data from JSON
         const employeesJSON = {
@@ -325,7 +540,7 @@
                     "lastName": "Dhay",
                     "cin": "04815852",
                     "dateOfBirth": "1990-04-19",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904901",
                     "email": "walid.dhay@smartech-solutions.net",
                     "isChefFamille": true,
@@ -340,7 +555,7 @@
                     "lastName": "Boulaabi",
                     "cin": "13604503",
                     "dateOfBirth": "1991-07-14",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904920",
                     "email": "contact@smartech-solutions.net",
                     "isChefFamille": false,
@@ -349,14 +564,13 @@
                     "salaire": 1371.095,
                     "contrat": "CDI",
                     "poste": "Attache administratif"
-
                 },
                 {
                     "firstName": "Alaa",
                     "lastName": "Arfeoui",
                     "cin": "09922361",
                     "dateOfBirth": "1993-09-13",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904908",
                     "email": "alaa.arfeoui@smartech-solutions.net",
                     "isChefFamille": true,
@@ -365,14 +579,13 @@
                     "salaire": 7098.633,
                     "contrat": "CDI",
                     "poste": "Lead civil and pipeline engineer"
-
                 },
                 {
                     "firstName": "Anis",
                     "lastName": "Haouas",
                     "cin": "08445551",
                     "dateOfBirth": "1981-08-18",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904913",
                     "email": "anis.haouas@smartech-solutions.net",
                     "isChefFamille": true,
@@ -381,14 +594,13 @@
                     "salaire": 3868.043,
                     "contrat": "CDI",
                     "poste": "Responsable Achat"
-
                 },
                 {
                     "firstName": "Sabrine",
                     "lastName": "Bettaieb",
                     "cin": "09868181",
                     "dateOfBirth": "1997-05-08",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904919",
                     "email": "sabrine.bettaieb@smartech-solutions.net",
                     "isChefFamille": false,
@@ -397,14 +609,13 @@
                     "salaire": 1200.000,
                     "contrat": "CIVP",
                     "poste": "Automation Engineer"
-
                 },
                 {
                     "firstName": "Ali",
                     "lastName": "Chouaya",
                     "cin": "05532742",
                     "dateOfBirth": "1981-08-18",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "29904907",
                     "email": "Ali.chouaya@smartech-solutions.net",
                     "isChefFamille": true,
@@ -413,14 +624,13 @@
                     "salaire": 6179.100,
                     "contrat": "CDI",
                     "poste": "Upstream Engineer"
-
                 },
                 {
                     "firstName": "Ghada",
                     "lastName": "Saad",
                     "cin": "14324736",
                     "dateOfBirth": "2000-07-20",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "",
                     "email": "ghada.saad@smartech-solutions.net",
                     "isChefFamille": false,
@@ -429,14 +639,13 @@
                     "salaire": 1000.000,
                     "contrat": "CIVP",
                     "poste": "Automation Engineer"
-
                 },
                 {
                     "firstName": "Aymen",
                     "lastName": "Khiari",
                     "cin": "04951765",
                     "dateOfBirth": "1999-09-10",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "",
                     "email": "aymen.khiari@smartech-solutions.net",
                     "isChefFamille": false,
@@ -445,30 +654,28 @@
                     "salaire": 1300.000,
                     "contrat": "CIVP",
                     "poste": "Automation Engineer"
-
                 },
                 {
                     "firstName": "Sabrine",
                     "lastName": "Ben Rhouma",
                     "cin": "09852296",
-                    "dateOfBirth": "2025-07-01",
-                    "address": "",
+                    "dateOfBirth": "1999-09-10",
+                    "address": "Sfax, Tunisie",
                     "phone": "27898386",
                     "email": "sabrine.ben.rhouma@smartech-solutions.net",
                     "isChefFamille": false,
                     "nbEnfants": 0,
-                    "dateOfRecrutement": "1999-09-10",
+                    "dateOfRecrutement": "2025-07-01",
                     "salaire": 2740.058,
                     "contrat": "CDI",
                     "poste": "Responsable qualité QA/QC HSSE"
-
                 },
                 {
                     "firstName": "Khawla",
                     "lastName": "Abd Alatif",
                     "cin": "06587973",
                     "dateOfBirth": "1995-09-17",
-                    "address": "",
+                    "address": "Sfax, Tunisie",
                     "phone": "93992123",
                     "email": "khawla@smartech-solutions.net",
                     "isChefFamille": false,
@@ -477,8 +684,7 @@
                     "salaire": 3063.460,
                     "contrat": "CDI",
                     "poste": "Process Engineer"
-
-                },
+                }
             ]
         };
 
@@ -510,8 +716,8 @@
             if (selectedIndex === '') {
                 document.getElementById('employee-info').style.display = 'none';
                 selectedEmployee = null;
-                // Clear form
                 document.getElementById('salaire-base').value = 0;
+                document.getElementById('generate-pdf').style.display = 'none';
                 return;
             }
 
@@ -546,6 +752,146 @@
             const field = document.querySelector(`#salary-name-${id}`).closest('.salary-addition');
             field.remove();
         }
+
+        function generatePDF() {
+            if (!selectedEmployee || !calculationResults) {
+                alert('Veuillez d\'abord calculer le salaire');
+                return;
+            }
+
+            // Update PDF template with calculated values
+            updatePDFTemplate();
+
+            // Generate PDF
+            const element = document.getElementById('pdf-template');
+            element.style.display = 'block';
+
+            const opt = {
+                margin: 0.5,
+                filename: `bulletin_paie_${selectedEmployee.firstName}_${selectedEmployee.lastName}_${new Date().toISOString().slice(0, 7)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Use html2pdf if available, otherwise fallback to basic jsPDF
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    element.style.display = 'none';
+                });
+            } else {
+                // Fallback using html2canvas + jsPDF
+                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF();
+                    const imgWidth = 210;
+                    const pageHeight = 295;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save(`bulletin_paie_${selectedEmployee.firstName}_${selectedEmployee.lastName}_${new Date().toISOString().slice(0, 7)}.pdf`);
+                    element.style.display = 'none';
+                });
+            }
+        }
+
+        function updatePDFTemplate() {
+    const currentDate = new Date();
+    const monthNames = ["JANVIER", "FÉVRIER", "MARS", "AVRIL", "MAI", "JUIN",
+        "JUILLET", "AOÛT", "SEPTEMBRE", "OCTOBRE", "NOVEMBRE", "DÉCEMBRE"];
+    
+    // Update period
+    document.getElementById('pdf-period').textContent = 
+        `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    
+    // Update employee info
+    document.getElementById('pdf-employee-name').textContent = 
+        `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
+    document.getElementById('pdf-position').textContent = selectedEmployee.poste;
+    document.getElementById('pdf-address').textContent = selectedEmployee.address || 'SFAX, TUNISIE';
+    document.getElementById('pdf-situation').textContent = 
+        selectedEmployee.isChefFamille ? 'Chef de famille' : 'Célibataire';
+    document.getElementById('pdf-enfants').textContent = selectedEmployee.nbEnfants;
+    
+    // Update salary table
+    const tableBody = document.getElementById('pdf-salary-details');
+    tableBody.innerHTML = '';
+    
+    // Add base salary row
+    addTableRow(tableBody, 1, 'Salaire de Base Mensuel', '26.000', 
+                calculationResults.salaireBase.toFixed(3), '1.000', 
+                calculationResults.salaireBase.toFixed(3), '-');
+    
+    // Add additional salary components
+    calculationResults.complements.forEach((comp, index) => {
+        addTableRow(tableBody, index + 2, comp.name, '1.000', 
+                    comp.amount.toFixed(3), '1.000', 
+                    comp.amount.toFixed(3), '-');
+    });
+    
+    // Add total brut row
+    addTotalRow(tableBody, 'Total Brut', '', '', '', 
+                calculationResults.salaireBrut.toFixed(3), '-');
+    
+    // Add net salary row
+    addTotalRow(tableBody, 'Salaire Net', '', '', '', 
+                calculationResults.salaireNet.toFixed(3), '-');
+    
+    // Add net à payer row
+    addTotalRow(tableBody, 'Net à payer', '', '', '', 
+                calculationResults.salaireNet.toFixed(3), '-');
+    
+    // Update summary values
+    document.getElementById('pdf-brut-summary').textContent = 
+        calculationResults.salaireBrut.toFixed(3);
+    document.getElementById('pdf-cnss-summary').textContent = 
+        calculationResults.cnss.toFixed(3);
+    document.getElementById('pdf-imposable-summary').textContent = 
+        calculationResults.salaireImposableSansDeduction.toFixed(3);
+    document.getElementById('pdf-irpp-summary').textContent = 
+        calculationResults.irppMensuel.toFixed(3);
+}
+
+function addTableRow(tableBody, num, designation, nombre, base, taux, gain, retenue) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${num}</td>
+        <td>${designation}</td>
+        <td>${nombre}</td>
+        <td>${base}</td>
+        <td>${taux}</td>
+        <td class="number">${gain}</td>
+        <td class="number">${retenue}</td>
+    `;
+    tableBody.appendChild(row);
+}
+
+function addTotalRow(tableBody, designation, nombre, base, taux, gain, retenue) {
+    const row = document.createElement('tr');
+    row.style.fontWeight = 'bold';
+    row.innerHTML = `
+        <td></td>
+        <td>${designation}</td>
+        <td>${nombre}</td>
+        <td>${base}</td>
+        <td>${taux}</td>
+        <td class="number">${gain}</td>
+        <td class="number">${retenue}</td>
+    `;
+    tableBody.appendChild(row);
+}
 
         document.getElementById('calculer').addEventListener('click', function () {
             // Check if employee is selected
@@ -609,44 +955,30 @@
             if (salaireImposableAnnuel > 5000) {
                 const tranche = Math.min(salaireImposableAnnuel - 5000, 5000);
                 irppAnnuel += tranche * 0.15;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 10000) {
                 const tranche = Math.min(salaireImposableAnnuel - 10000, 10000);
                 irppAnnuel += tranche * 0.25;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 20000) {
                 const tranche = Math.min(salaireImposableAnnuel - 20000, 10000);
                 irppAnnuel += tranche * 0.30;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 30000) {
                 const tranche = Math.min(salaireImposableAnnuel - 30000, 10000);
                 irppAnnuel += tranche * 0.33;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 40000) {
                 const tranche = Math.min(salaireImposableAnnuel - 40000, 10000);
                 irppAnnuel += tranche * 0.36;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 50000) {
                 const tranche = Math.min(salaireImposableAnnuel - 50000, 20000);
                 irppAnnuel += tranche * 0.38;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             if (salaireImposableAnnuel > 70000) {
-                const tranche = Math.min(salaireImposableAnnuel - 70000, infinity);
+                const tranche = salaireImposableAnnuel - 70000;
                 irppAnnuel += tranche * 0.40;
-                console.log(tranche);
-                console.log(irppAnnuel);
             }
             const irppMensuel = irppAnnuel / 12;
 
@@ -655,7 +987,20 @@
 
             // 7. Salaire net
             const avance = parseFloat(document.getElementById('avance').value) || 0;
-            const salaireNet = salaireBrut - cnss - irppMensuel - css - avance;
+            let salaireNet;
+
+            // Store calculation results for PDF generation
+            calculationResults = {
+                salaireBase,
+                complements,
+                salaireBrut,
+                cnss: selectedEmployee.contrat === "CIVP" ? 0 : cnss,
+                salaireImposableSansDeduction: selectedEmployee.contrat === "CIVP" ? salaireBrut : salaireImposableSansDeduction,
+                irppMensuel: selectedEmployee.contrat === "CIVP" ? 0 : irppMensuel,
+                css: selectedEmployee.contrat === "CIVP" ? 0 : css,
+                avance,
+                salaireNet: selectedEmployee.contrat === "CIVP" ? salaireBrut - avance : salaireBrut - cnss - irppMensuel - css - avance
+            };
 
             // Affichage des résultats
             document.getElementById('s-base').textContent = salaireBase.toFixed(3) + ' DT';
@@ -674,17 +1019,16 @@
             });
 
             if (selectedEmployee.contrat === "CIVP") {
+                salaireNet = salaireBrut - avance;
                 document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
-                document.getElementById('s-cnss').textContent = 0 + ' DT';
+                document.getElementById('s-cnss').textContent = '0.000 DT';
                 document.getElementById('s-imposable').textContent = salaireBrut.toFixed(3) + ' DT';
-                document.getElementById('s-irpp').textContent = 0 + ' DT';
-                document.getElementById('s-css').textContent = 0 + ' DT';
+                document.getElementById('s-irpp').textContent = '0.000 DT';
+                document.getElementById('s-css').textContent = '0.000 DT';
                 document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
-                document.getElementById('s-net').textContent = salaireBrut.toFixed(3) + ' DT';
-
-                document.getElementById('results').style.display = 'block';
-
+                document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
             } else {
+                salaireNet = salaireBrut - cnss - irppMensuel - css - avance;
                 document.getElementById('s-brut').textContent = salaireBrut.toFixed(3) + ' DT';
                 document.getElementById('s-cnss').textContent = cnss.toFixed(3) + ' DT';
                 document.getElementById('s-imposable').textContent = salaireImposableSansDeduction.toFixed(3) + ' DT';
@@ -692,16 +1036,155 @@
                 document.getElementById('s-css').textContent = css.toFixed(3) + ' DT';
                 document.getElementById('s-avance').textContent = avance.toFixed(3) + ' DT';
                 document.getElementById('s-net').textContent = salaireNet.toFixed(3) + ' DT';
-
-                document.getElementById('results').style.display = 'block';
             }
 
-
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('generate-pdf').style.display = 'inline-block';
         });
 
+        function savePDF() {
+            if (!selectedEmployee || !calculationResults) {
+                alert('Veuillez d\'abord calculer le salaire');
+                return;
+            }
+
+            // Update PDF template with calculated values
+            updatePDFTemplate();
+
+            // Generate PDF
+            const element = document.getElementById('pdf-template');
+            element.style.display = 'block';
+
+            const opt = {
+                margin: 0.5,
+                filename: `bulletin_paie_${selectedEmployee.firstName}_${selectedEmployee.lastName}_${new Date().toISOString().slice(0, 7)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Use html2pdf if available, otherwise fallback to basic jsPDF
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    element.style.display = 'none';
+                    // Here you would add code to save to your server/database
+                    alert('PDF enregistré avec succès!');
+                });
+            } else {
+                // Fallback using html2canvas + jsPDF
+                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    const imgWidth = 210;
+                    const pageHeight = 295;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    // Here you would add code to save to your server/database
+                    alert('PDF enregistré avec succès!');
+                    element.style.display = 'none';
+                });
+            }
+        }
+
+        function viewPayslip() {
+            if (!selectedEmployee || !calculationResults) {
+                alert('Veuillez d\'abord calculer le salaire');
+                return;
+            }
+
+            // Update PDF template with calculated values
+            updatePDFTemplate();
+
+            // Show the PDF template in a modal or new window
+            const pdfTemplate = document.getElementById('pdf-template');
+            pdfTemplate.style.display = 'block';
+
+            // You could also open it in a new window
+            // const pdfWindow = window.open('', '_blank');
+            // pdfWindow.document.write(pdfTemplate.outerHTML);
+            // pdfWindow.document.close();
+
+            // Or create a modal dialog
+            createModal(pdfTemplate.outerHTML);
+        }
+
+        function createModal(content) {
+            // Remove existing modal if it exists
+            const existingModal = document.getElementById('payslip-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create modal container
+            const modal = document.createElement('div');
+            modal.id = 'payslip-modal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            modal.style.zIndex = '1000';
+            modal.style.overflow = 'auto';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'white';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = '5px';
+            modalContent.style.maxWidth = '80%';
+            modalContent.style.maxHeight = '90%';
+            modalContent.style.overflow = 'auto';
+            modalContent.innerHTML = content;
+
+            // Add close button
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Fermer';
+            closeButton.style.marginTop = '20px';
+            closeButton.style.padding = '10px 20px';
+            closeButton.style.backgroundColor = '#f44336';
+            closeButton.style.color = 'white';
+            closeButton.style.border = 'none';
+            closeButton.style.borderRadius = '4px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.onclick = function () {
+                modal.remove();
+            };
+
+            modalContent.appendChild(closeButton);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Close modal when clicking outside
+            modal.onclick = function (e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initializeApp);
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 
 </html>
