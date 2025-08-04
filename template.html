@@ -497,13 +497,15 @@
             <div class="company-info">
                 <img src="template_fiche-de-paix/smartech_logo.png" style="width: 100px; height: 60px; margin-left: 50px;" alt="Logo SMARTECH SOLUTIONS">
                 <h2>SMARTECH SOLUTIONS</h2>
-                <p>IMMEUBLE CITY LAKE CENTER BLOC A</p>
+                <p>Emeraude Centre Building, Bloc B 5-1, Ave de la Feuille s'érable, Berge du Lac II, 1053 Tunis-Tunisia </p>
                 <p>Tel: +216 29 904 904</p>
                 <p>CNSS EMPLOYEUR: 262168-74</p>
             </div>
             <div class="period-info">
                 <div class="bulletin-title">BULLETIN DE PAIE</div>
                 <p id="pdf-period">AVRIL 2025</p>
+                <p></p>
+
             </div>
         </div>
 
@@ -578,6 +580,23 @@
         // Employee data from JSON
         const employeesJSON = {
             "employees": [
+                {
+                    "firstName": "Foulen",
+                    "lastName": "Ben Foulen",
+                    "cin": "12345678",
+                    "dateOfBirth": "1990-04-19",
+                    "address": "Sfax, Tunisie",
+                    "phone": "29904901",
+                    "email": "Foulen.BenFoulen@smartech-solutions.net",
+                    "isChefFamille": true,
+                    "nbEnfants": 0,
+                    "dateOfRecrutement": "2025-04-14",
+                    "salaire": 4388.160,
+                    "contrat": "CDI",
+                    "poste": "Employé administratif",
+                    "m-cnss": "12345678-01" ,
+                    "matricule": "20"
+                },
                 {
                     "firstName": "Walid",
                     "lastName": "Dhay",
@@ -976,7 +995,7 @@
                 const cnssRow = document.createElement('tr');
                 cnssRow.innerHTML = `
                     <td>${rowCounter++}</td>
-                    <td>CNSS Normale</td>
+                    <td>CNSS</td>
                     <td></td>
                     <td>${calculationResults.salaireBrut.toFixed(3)}</td>
                     <td>9.68%</td>
