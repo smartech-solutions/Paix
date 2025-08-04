@@ -155,7 +155,8 @@
             margin-right: 8px;
             vertical-align: middle;
         }
-                .info-box {
+
+        .info-box {
             position: fixed;
             top: 20px;
             right: 20px;
@@ -187,8 +188,10 @@
     <!-- Static Information Box -->
     <div class="info-box">
         <h4>Information</h4>
-      
+        <p><strong>Current Month:</strong> <span id="current-month"></span></p>
+        <h3>Notice:</h3>
         <p>Mr. Walid, vous pouvez générer des fiches de paie pour le mois de juilliet</p><br>
+        <strong style="color:red;">Mais avant ça,</strong><br>
         <p>M. Karim souhaite ajouter le RIB du compte bancaire pour chaque employé sur la fiche de paie.</p>
     </div>
     <div class="login-container">
@@ -258,20 +261,20 @@
                     // Success
                     //showSuccessNotification();
                     showSuccessNotification();
-                    
-                    window.location = "loading.html";
-                    
 
-                    
+                    window.location = "loading.html";
+
+
+
                     // Redirect after short delay
                     setTimeout(() => {
-                        
+
                         isLoginSuccessful = true;
                         window.location.href = "cl-2Ways.html";
 
                     }, 1500);
 
-                    
+
 
                 } else {
                     // Error
