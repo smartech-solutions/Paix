@@ -8,79 +8,302 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #129ddd 0%, #5a95b1 50%, #a1d5f1 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating background elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(161, 213, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(18, 157, 221, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(90, 149, 177, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #129ddd 0%, #5a95b1 100%);
+            color: white;
+            padding: 30px 25px;
+            box-shadow: 5px 0 25px rgba(18, 157, 221, 0.3);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .logo-section img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            border-radius: 50%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-section img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .logo-section h1 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo-section p {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
         }
 
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(18, 157, 221, 0.2);
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 1s ease 0.5s forwards;
         }
 
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(18, 157, 221, 0.02) 0%, rgba(161, 213, 241, 0.02) 100%);
+            pointer-events: none;
+        }
+
+        .container h2 {
+            color: #129ddd;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .container h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #129ddd, #5a95b1);
+            border-radius: 2px;
+        }
+
+        /* Form Groups */
         .form-group {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            border-left: 4px solid #1976D2;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(161, 213, 241, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border-radius: 15px;
+            border-left: 5px solid #129ddd;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.8s ease forwards;
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.1s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.3s; }
+        .form-group:nth-child(5) { animation-delay: 0.4s; }
+
+        .form-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(18, 157, 221, 0.2);
+            border-left-color: #5a95b1;
         }
 
         .form-group h3 {
-            margin-top: 0;
-            color: #333;
+            margin-bottom: 20px;
+            color: #129ddd;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
+        .form-group h3::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #129ddd, #5a95b1);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Form Controls */
         label {
             display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #5a95b1;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(18, 157, 221, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #129ddd;
+            box-shadow: 0 0 20px rgba(18, 157, 221, 0.3);
+            transform: translateY(-2px);
+            background: white;
+        }
+
+        /* Employee Info */
+        #employee-info {
+            background: linear-gradient(135deg, rgba(161, 213, 241, 0.2) 0%, rgba(255, 255, 255, 0.9) 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(18, 157, 221, 0.2);
+            margin-top: 20px;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: fadeInScale 0.5s ease forwards;
+        }
+
+        #employee-info h4 {
+            color: #129ddd;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        #employee-info p {
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
+            color: #5a95b1;
+            font-weight: 500;
         }
 
-        select {
-            padding: 12px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #0c5460;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
-
-        input,
-        button {
-            padding: 12px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #0c5460;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
-
+        /* Salary Addition */
         .salary-addition {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 15px;
+            margin-bottom: 15px;
             align-items: end;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInLeft 0.5s ease forwards;
         }
 
         .salary-addition input[type="text"] {
@@ -91,79 +314,140 @@
             flex: 1;
         }
 
+        /* Buttons */
+        .remove-btn, .add-salary-btn, .calculate-btn, .pdf-btn, .preview-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
         .remove-btn {
-            background: #f44336;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 4px;
-            cursor: pointer;
             width: auto;
-            min-width: 40px;
-        }
-
-        .add-salary-btn,
-        .calculate-btn,
-        .pdf-btn,
-        .preview-btn {
-            background: #0c5460;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .pdf-btn {
-            background: #2196F3;
-        }
-
-        .preview-btn {
-            background: #FF9800;
-        }
-
-        .add-salary-btn:hover,
-        .calculate-btn:hover {
-            background: #1976D2;
-        }
-
-        .pdf-btn:hover {
-            background: #1976D2;
-        }
-
-        .preview-btn:hover {
-            background: #F57C00;
+            min-width: 45px;
         }
 
         .remove-btn:hover {
-            background: #d32f2f;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(238, 90, 36, 0.4);
+        }
+
+        .add-salary-btn, .calculate-btn {
+            background: linear-gradient(135deg, #129ddd, #5a95b1);
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .pdf-btn {
+            background: linear-gradient(135deg, #5a95b1, #a1d5f1);
+            color: white;
+        }
+
+        .preview-btn {
+            background: linear-gradient(135deg, #a1d5f1, #129ddd);
+            color: white;
+        }
+
+        .add-salary-btn:hover, .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(18, 157, 221, 0.4);
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(90, 149, 177, 0.4);
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(161, 213, 241, 0.4);
+        }
+
+        /* Button ripple effect */
+        .add-salary-btn::before, .calculate-btn::before, .pdf-btn::before, .preview-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .add-salary-btn:active::before, .calculate-btn:active::before, 
+        .pdf-btn:active::before, .preview-btn:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         .button-group button {
             flex: 1;
         }
 
+        /* Results Section */
         #results {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
-            border-radius: 8px;
-            border: 1px solid #b3d9ff;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(161, 213, 241, 0.15) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-radius: 20px;
+            border: 2px solid rgba(18, 157, 221, 0.2);
+            backdrop-filter: blur(15px);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 0.8s ease forwards;
+        }
+
+        #results h3 {
+            color: #129ddd;
+            margin-bottom: 25px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .salary-breakdown {
+            background: linear-gradient(135deg, rgba(161, 213, 241, 0.2) 0%, rgba(255, 255, 255, 0.8) 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(161, 213, 241, 0.3);
+        }
+
+        .salary-breakdown h4 {
+            color: #129ddd;
+            margin-bottom: 15px;
+            font-size: 18px;
         }
 
         .result-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(18, 157, 221, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            padding-left: 10px;
+            border-bottom-color: #129ddd;
         }
 
         .result-item:last-child {
@@ -171,76 +455,52 @@
         }
 
         .result-item.total {
-            font-weight: bold;
-            font-size: 18px;
-            background: #0c5460;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-
-        .salary-breakdown {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border: 1px solid #ffeaa7;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, #0f31f1b5 0%, #1d3df6 100%);
+            font-weight: 700;
+            font-size: 20px;
+            background: linear-gradient(135deg, #129ddd, #5a95b1);
             color: white;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            min-height: 100vh;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(18, 157, 221, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Info Box */
+        .info-box {
             position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 6px solid #129ddd;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(18, 157, 221, 0.2);
+            max-width: 300px;
+            z-index: 1000;
+            border: 1px solid rgba(18, 157, 221, 0.2);
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideInRight 1s ease 1s forwards;
         }
 
-        .sidebar img {
-            width: 100%;
-            max-height: 80px;
-            object-fit: contain;
-            margin-bottom: 10px;
+        .info-box h4 {
+            margin-bottom: 15px;
+            color: #129ddd;
+            border-bottom: 2px solid #a1d5f1;
+            padding-bottom: 8px;
+            font-size: 16px;
         }
 
-        .sidebar h1 {
-            font-size: 18px;
-            margin: 10px 0 5px;
+        .info-box p {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #5a95b1;
+            line-height: 1.4;
         }
 
-        .sidebar p {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .nav-links {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* PDF Template Styles */
+        /* PDF Styles remain the same but with updated colors */
         .pdf-template {
             display: none;
             width: 210mm;
@@ -258,7 +518,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 30px;
-            border-bottom: 2px solid #333;
+            border-bottom: 2px solid #129ddd;
             padding-bottom: 20px;
         }
 
@@ -270,7 +530,7 @@
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            color: #333;
+            color: #129ddd;
             margin-bottom: 10px;
         }
 
@@ -285,7 +545,7 @@
             gap: 5px;
             margin-bottom: 5px;
             padding: 5px;
-            background: #f9f9f9;
+            background: rgba(161, 213, 241, 0.1);
             border-radius: 5px;
         }
 
@@ -302,8 +562,9 @@
         }
 
         .salary-table th {
-            background: #e0e0e0;
+            background: #a1d5f1;
             font-weight: bold;
+            color: #129ddd;
         }
 
         .salary-table .number {
@@ -312,14 +573,14 @@
 
         .total-row {
             font-weight: bold;
-            background: #f0f0f0;
+            background: rgba(161, 213, 241, 0.2);
         }
 
         .net-total {
             font-size: 18px;
             font-weight: bold;
             text-align: center;
-            background: #0c5460;
+            background: linear-gradient(135deg, #129ddd, #5a95b1);
             color: white;
             padding: 15px;
             border-radius: 5px;
@@ -331,7 +592,7 @@
             justify-content: space-between;
             margin-top: 50px;
             padding-top: 20px;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #5a95b1;
         }
 
         .signature-box {
@@ -339,7 +600,7 @@
             width: 200px;
         }
 
-        /* Modal styles for PDF preview */
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -349,188 +610,284 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(18, 157, 221, 0.1);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 800px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            margin: 2% auto;
+            padding: 30px;
+            border: 2px solid rgba(18, 157, 221, 0.2);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(18, 157, 221, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
         }
 
         .close {
-            color: #aaa;
+            color: #5a95b1;
             float: right;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .close:hover {
-            color: black;
+            color: #129ddd;
+            transform: scale(1.2);
         }
 
         .modal-buttons {
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 30px;
         }
 
-        /* Information Box Styles */
-        .info-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #e7f3fe;
-            border-left: 6px solid #2196F3;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 250px;
-            z-index: 1000;
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .info-box h4 {
-            margin-top: 0;
-            color: #0c5460;
-            border-bottom: 1px solid #bee5eb;
-            padding-bottom: 5px;
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .info-box p {
-            margin-bottom: 5px;
-            font-size: 14px;
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 20px;
+            }
+
+            .content-area {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .info-box {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .salary-addition {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .salary-addition input {
+                width: 100%;
+            }
         }
     </style>
-        <link rel="icon" href="template_fiche-de-paix/smartech_logo.png" type="image/png">
-
+    <link rel="icon" href="template_fiche-de-paix/smartech_logo.png" type="image/png">
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo-section">
-            <img src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo" />
-            <h1>SMARTECH SOLUTIONS</h1>
-            <p>Système de Paie Professionnel</p>
-        </div>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <img src="template_fiche-de-paix/smartech_logo.png" alt="Smartech Logo" />
+                <h1>SMARTECH SOLUTIONS</h1>
+                <p>Système de Paie Professionnel</p>
+            </div>
 
-        <div class="nav-links">
-            <a href="cl-2Ways.html" class="nav-link active">Calculateur</a>
-            <a href="template.html" class="nav-link">Calcule par Employé</a>
-        </div>
-    </div>
-
-
-    <!-- Static Information Box -->
-    <div class="info-box">
-        <h4>Information</h4>
-        <p><strong>Current Month:</strong> <span id="current-month"></span></p>
-        <h3>Notice:</h3>
-        <p>Mr. Walid, vous pouvez générer des fiches de paie pour le mois de juilliet</p><br>
-        <strong style="color:red;">Mais avant ça,</strong><br>
-        <p>M. Karim souhaite ajouter le RIB du compte bancaire pour chaque employé sur la fiche de paie.</p>
-    </div>
-
-
-    <div class="container">
-        <h2>Calculateur de Paie Tunisien</h2>
-
-        <div class="form-group">
-            <h3>Sélection de l'Employé</h3>
-            <label for="employee-select">Choisir un employé:</label>
-            <select id="employee-select" onchange="loadEmployeeData()">
-                <option value="">-- Sélectionner un employé --</option>
-            </select>
-
-            <div id="employee-info"
-                style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 5px;">
-                <h4>Informations de l'employé:</h4>
-                <p><strong>Nom:</strong> <span id="emp-name"></span></p>
-                <p><strong>CIN:</strong> <span id="emp-cin"></span></p>
-                <p><strong>Email:</strong> <span id="emp-email"></span></p>
-                <p><strong>Chef de famille:</strong> <span id="emp-chef"></span></p>
-                <p><strong>Nombre d'enfants:</strong> <span id="emp-enfants"></span></p>
+            <div class="nav-links">
+                <a href="cl-2Ways.html" class="nav-link active">Calculateur</a>
+                <a href="template.html" class="nav-link">Calcule par Employé</a>
             </div>
         </div>
 
-        <div class="form-group">
-            <h3>Composantes du Salaire</h3>
-            <label for="salaire-base">Salaire de base (DT):</label>
-            <input type="number" id="salaire-base" step="0.001" min="0" value="0">
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Static Information Box 
+            <div class="info-box">
+                <h4>Information</h4>
+                <p><strong>Current Month:</strong> <span id="current-month"></span></p>
+                <h3>Notice:</h3>
+                <p>Mr. Walid, vous pouvez générer des fiches de paie pour le mois de juilliet</p><br>
+                <strong style="color:#129ddd;">Mais avant ça,</strong><br>
+                <p>M. Karim souhaite ajouter le RIB du compte bancaire pour chaque employé sur la fiche de paie.</p>
+            </div>-->
 
-            <div id="additional-salaries">
-                <h4 style="margin-top: 20px; margin-bottom: 15px;">Compléments de salaire:</h4>
-            </div>
+            <div class="container">
+                <h2>Calculateur de Paie Tunisien</h2>
 
-            <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de
-                salaire</button>
-        </div>
+                <div class="form-group">
+                    <h3>Sélection de l'Employé</h3>
+                    <label for="employee-select">Choisir un employé:</label>
+                    <select id="employee-select" onchange="loadEmployeeData()">
+                        <option value="">-- Sélectionner un employé --</option>
+                    </select>
 
-        <div class="form-group">
-            <h3>Déductions</h3>
-            <label for="avance">Avance (DT):</label>
-            <input type="number" id="avance" step="0.001" min="0" value="0">
-        </div>
-        <div class="form-group">
-            <h3>Congés</h3>
-            <label for="conge">Solde de congé:</label>
-            <input type="number" id="conge" step="0.001" min="0" value="0">
-        </div>
-
-        <div class="button-group">
-            <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
-            <button class="preview-btn" id="preview-pdf" onclick="previewPDF()" style="display: none;">Aperçu
-                PDF</button>
-            <button class="pdf-btn" id="generate-pdf" onclick="generatePDF()" style="display: none;">Générer
-                PDF</button>
-        </div>
-
-        <div id="results" style="display: none;">
-            <h3>Détail du Calcul</h3>
-
-            <div class="salary-breakdown">
-                <h4>Composition du Salaire Brut:</h4>
-                <div class="result-item">
-                    <span>Salaire de base:</span>
-                    <span id="s-base"></span>
+                    <div id="employee-info" style="display: none;">
+                        <h4>Informations de l'employé:</h4>
+                        <p><strong>Nom:</strong> <span id="emp-name"></span></p>
+                        <p><strong>CIN:</strong> <span id="emp-cin"></span></p>
+                        <p><strong>Email:</strong> <span id="emp-email"></span></p>
+                        <p><strong>Chef de famille:</strong> <span id="emp-chef"></span></p>
+                        <p><strong>Nombre d'enfants:</strong> <span id="emp-enfants"></span></p>
+                    </div>
                 </div>
-                <div id="additional-breakdown"></div>
-                <div class="result-item" style="font-weight: bold; border-top: 2px solid #333; padding-top: 10px;">
-                    <span>Salaire brut total:</span>
-                    <span id="s-brut"></span>
-                </div>
-            </div>
 
-            <div class="result-item">
-                <span>Retenue CNSS (9.68%):</span>
-                <span id="s-cnss"></span>
-            </div>
-            <div class="result-item">
-                <span>Salaire imposable:</span>
-                <span id="s-imposable"></span>
-            </div>
-            <div class="result-item">
-                <span>Retenue IRPP:</span>
-                <span id="s-irpp"></span>
-            </div>
-            <div class="result-item">
-                <span>Contribution sociale (0.5%):</span>
-                <span id="s-css"></span>
-            </div>
-            <div class="result-item">
-                <span>Avance:</span>
-                <span id="s-avance"></span>
-            </div>
-            <div class="result-item total">
-                <span>Salaire Net:</span>
-                <span id="s-net"></span>
+                <div class="form-group">
+                    <h3>Composantes du Salaire</h3>
+                    <label for="salaire-base">Salaire de base (DT):</label>
+                    <input type="number" id="salaire-base" step="0.001" min="0" value="0">
+
+                    <div id="additional-salaries">
+                        <h4 style="margin-top: 20px; margin-bottom: 15px; color: #5a95b1;">Compléments de salaire:</h4>
+                    </div>
+
+                    <button type="button" class="add-salary-btn" onclick="addSalaryField()">+ Ajouter un complément de salaire</button>
+                </div>
+
+                <div class="form-group">
+                    <h3>Déductions</h3>
+                    <label for="avance">Avance (DT):</label>
+                    <input type="number" id="avance" step="0.001" min="0" value="0">
+                </div>
+
+                <div class="form-group">
+                    <h3>Congés</h3>
+                    <label for="conge">Solde de congé:</label>
+                    <input type="number" id="conge" step="0.001" min="0" value="0">
+                </div>
+
+                <div class="button-group">
+                    <button class="calculate-btn" id="calculer">Calculer le Salaire Net</button>
+                    <button class="preview-btn" id="preview-pdf" onclick="previewPDF()" style="display: none;">Aperçu PDF</button>
+                    <button class="pdf-btn" id="generate-pdf" onclick="generatePDF()" style="display: none;">Générer PDF</button>
+                </div>
+
+                <div id="results" style="display: none;">
+                    <h3>Détail du Calcul</h3>
+
+                    <div class="salary-breakdown">
+                        <h4>Composition du Salaire Brut:</h4>
+                        <div class="result-item">
+                            <span>Salaire de base:</span>
+                            <span id="s-base"></span>
+                        </div>
+                        <div id="additional-breakdown"></div>
+                        <div class="result-item" style="font-weight: bold; border-top: 2px solid #129ddd; padding-top: 10px;">
+                            <span>Salaire brut total:</span>
+                            <span id="s-brut"></span>
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <span>Retenue CNSS (9.68%):</span>
+                        <span id="s-cnss"></span>
+                    </div>
+                    <div class="result-item">
+                        <span>Salaire imposable:</span>
+                        <span id="s-imposable"></span>
+                    </div>
+                    <div class="result-item">
+                        <span>Retenue IRPP:</span>
+                        <span id="s-irpp"></span>
+                    </div>
+                    <div class="result-item">
+                        <span>Contribution sociale (0.5%):</span>
+                        <span id="s-css"></span>
+                    </div>
+                    <div class="result-item">
+                        <span>Avance:</span>
+                        <span id="s-avance"></span>
+                    </div>
+                    <div class="result-item total">
+                        <span>Salaire Net:</span>
+                        <span id="s-net"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -919,10 +1276,16 @@
 
             // Show the modal
             document.getElementById('pdf-preview-modal').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('pdf-preview-modal').classList.add('show');
+            }, 10);
         }
 
         function closeModal() {
-            document.getElementById('pdf-preview-modal').style.display = 'none';
+            document.getElementById('pdf-preview-modal').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('pdf-preview-modal').style.display = 'none';
+            }, 300);
         }
 
         function generatePDF() {
@@ -1315,6 +1678,7 @@
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initializeApp);
     </script>
+    <script src="auth-check.js"></script>
 </body>
 
 </html>

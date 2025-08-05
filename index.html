@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #129ddd 0%, #5a95b1 50%, #a1d5f1 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -71,14 +71,14 @@
         input[type="email"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #129ddd;
             box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
         }
 
         .login-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #129ddd 0%, #5a95b1 50%, #a1d5f1 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -243,46 +243,35 @@
 
         // Handle form submission
         document.getElementById('login-form').addEventListener('submit', function (e) {
-            e.preventDefault();
+        e.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
 
-            // Hide any previous notifications
-            hideNotifications();
+        // Hide any previous notifications
+        hideNotifications();
 
-            // Add loading state
-            document.querySelector('.login-container').classList.add('loading');
+        // Add loading state
+        document.querySelector('.login-container').classList.add('loading');
 
-            // Simulate loading delay for better UX
-            setTimeout(() => {
-                // Check credentials
-                if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-                    // Success
-                    //showSuccessNotification();
-                    showSuccessNotification();
-
-                    window.location = "loading.html";
-
-
-
-                    // Redirect after short delay
-                    setTimeout(() => {
-
-                        isLoginSuccessful = true;
-                        window.location.href = "cl-2Ways.html";
-
-                    }, 1500);
-
-
-
-                } else {
-                    // Error
-                    showErrorNotification();
-                    document.querySelector('.login-container').classList.remove('loading');
-                }
-            }, 800);
-        });
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+            // Check credentials
+            if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+                // Success
+                showSuccessNotification();
+                
+                // Set authentication flag
+                sessionStorage.setItem('authenticated', 'true');
+                
+                window.location = "loading.html";
+            } else {
+                // Error
+                showErrorNotification();
+                document.querySelector('.login-container').classList.remove('loading');
+            }
+        }, 800);
+    });
 
         function hideNotifications() {
             document.getElementById('error-notification').style.display = 'none';
